@@ -1,0 +1,304 @@
+<html>
+<head>
+  <title> <%= title %></title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/0.10.0/lodash.min.js"></script>
+  <script type="text/javascript" src="http://alasql.org/codex/lib/alasql/alasql.min.js"></script>
+  <script type="text/javascript" src=" https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.0/jquery.validate.min.js"></script>
+
+   <script type="text/javascript" src=" ../js/adicional.js"></script>
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css"> 
+
+
+  <link rel="stylesheet" href="../css/adicional.css">
+
+  <script>
+
+$(document).ready(function() {
+         $("#Notificacion").hide();
+          $("#Correcto").hide();
+     $("#registro").click(function(){
+        
+          var nombre = $("#firstName").val(),
+              apellidos = $("#lastName").val(),
+              pw = $("#pw").val(),
+              pw2 = $("#pw2").val(),
+              email = $("#email").val(),
+              pais = $("#ComboPaises").val();
+
+              var val;
+              var error = -1;
+debugger;
+               val = validar(nombre,'Nombre');
+              if(val=='valid'){
+                val = validar(apellidos,'Apellido');
+                if(val=='valid'){
+                    val = validar(email,'Email');
+                    if(val=='valid'){
+                        val = validar(pw,'Password');
+                        if(val=='valid'){
+                            if(pw==pw2){
+
+
+                                 $.post( "http://localhost:8080/usuario", CamposJson('#firstName,#lastName,#pw,#email,#ComboPaises'))
+                                  .done(function( data ) {
+
+                                    if(!data.success){
+                                        error=1;
+                                        val = 'Este correo ya se encuentra registrado.';
+                                    }else{
+                                        error = 0;
+                                        val= 'Registro Correcto';
+                                    }
+
+                                    if(error==0){
+                                        $("#Notificacion").hide(350);
+                                        $("#Correcto").show(350);
+                                     }else{
+                                        $("#Notificacion").hide(350);
+                                        $("#Notificacion").show(350);
+                                           $("#Correcto").hide(350);
+                                         $("#textnot").text(val);
+                                     }
+
+
+                                  });
+                                  
+
+                            }else{
+                                error=1;
+                                val = 'Las contrasenas no coinciden';
+                            }
+                        }else{
+                            error=1;
+                        }
+                    }else{
+                        error=1;
+                    }
+
+                }else{
+                    error=1;
+                }
+
+             }else{
+                error=1;
+             }
+
+    if(error==0){
+        $("#Notificacion").hide(350);
+        $("#Correcto").show(350);
+    }else{
+        $("#Notificacion").hide(350);
+        $("#Notificacion").show(350);
+        $("#Correcto").hide(350);
+        val = (error == -1) ?  'Error interno del servicio web' :  val;  
+        $("#textnot").text(val);
+    }
+
+
+
+      });
+
+});
+</script>
+
+</head>
+<body>
+  <div style="margin:100px;">
+    <nav class="navbar navbar-inverse navbar-static-top">
+  <div class="container">
+    <a class="navbar-brand" href="/">Express HTML</a>
+    <ul class="nav navbar-nav">
+      <li class="active">
+        <a href="/">Home</a>
+      </li>
+      <li>
+        <a href="/about">About</a>
+      </li>
+      <li>
+        <a href="/sitemap">Sitemap</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
+<div class="container containerBorder">
+  <div class="row">
+<div class="col-xs-12" id="demoContainer">
+  <div class="alert alert-success" id="Correcto">
+    <strong>Bien!</strong> Registro Hecho exitosamente.
+  </div>
+<div class="alert alert-danger" id="Notificacion" >
+  <strong>Error!</strong><p id="textnot" ></p>
+</div>
+                <div id="registrationForm2" class="form-horizontal fv-form fv-form-bootstrap" novalidate="novalidate"  target="none" action="">
+                 <!--  <button type="submit" class="fv-hidden-submit" style="display: none; width: 0px; height: 0px;"></button> -->
+    <div class="form-group">
+        <label class="col-xs-3 control-label">Full name</label>
+        <div class="col-xs-4">
+            <input type="text" class="form-control" name="firstName" id="firstName" placeholder="First name" />
+        </div>
+        <div class="col-xs-4">
+            <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Last name" />
+        </div>
+    </div>
+
+   <!-- <div class="form-group">
+        <label class="col-xs-3 control-label">Username</label>
+        <div class="col-xs-5">
+            <input type="text" class="form-control" name="username" />
+        </div>
+    </div> -->
+
+    <div class="form-group">
+        <label class="col-xs-3 control-label">Email address</label>
+        <div class="col-xs-5">
+            <input type="text" class="form-control" name="email" id="email" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-xs-3 control-label">Password</label>
+        <div class="col-xs-5">
+            <input type="password" class="form-control" name="pw" id="pw" />
+        </div>
+    </div>
+
+     <div class="form-group">
+        <label class="col-xs-3 control-label">Repeat Password</label>
+        <div class="col-xs-5">
+            <input type="password" class="form-control" name="pw2"  id="pw2" />
+        </div>
+    </div>
+
+    <script>
+
+    $(function() {
+
+        $.when( $.get("http://localhost:8080/paises", function(data, status){
+           
+            jQuery.data( document, "paises",data );
+              //console.log("Data: " + data + "\nStatus: " + status);
+          })).then(function( data, textStatus, jqXHR ) {
+            // Paises();
+         
+            ComboPaises();
+             // GroupBy(jQuery.data( document, "paises"));
+         // alert( jqXHR.status ); // Alerts 200
+        });
+          
+
+         
+         
+    });
+3
+    function Where(data,value){
+     return  _.filter(data, function(item, index) {
+         return _.contains([value], item.iso);
+    });
+
+    }
+
+
+
+    function ComboPaises(){
+
+        $.each(   GroupBy(jQuery.data( document, "paises")), function( i, l ){
+          $( "#ComboPaises" ).append( " <option value='"+l.Id+"'>" + l.Pais +"</option>" );
+        });
+
+    }
+
+    function GroupBy(data){
+
+      return  _
+        .chain(data)
+        .groupBy('Nombre')
+        .sort('Nombre')
+        .map(function(value, key) {
+            return {
+                Pais: key,
+                Id: value[0].id,
+                Iso: value[0].iso
+               // paises: _.pluck(value, 'Nombre')
+            }
+        })
+        .value();
+    }
+    </script>
+
+        <div class="form-group">
+        <label class="col-xs-3 control-label">Selecciona Pais:</label>
+        <div class="col-xs-5 selectContainer">
+            <select class="form-control" name="color" id="ComboPaises">
+               
+            </select>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+       <!--  <label class="col-xs-3 control-label">Gender</label>
+       <div class="col-xs-6">
+            <div class="radio">
+                <label>
+                    <input type="radio" name="gender" value="male" /> Male
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="gender" value="female" /> Female
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="gender" value="other" /> Other
+                </label>
+            </div>
+        </div> -->
+    </div>
+
+   <!-- <div class="form-group">
+        <label class="col-xs-3 control-label">Terms of use</label>
+        <div class="col-xs-9">
+            <div style="border: 1px solid #e5e5e5; height: 200px; overflow: auto; padding: 10px;">
+                <p>Lorem ipsum dolor sit amet, veniam numquam has te. No suas nonumes recusabo mea, est ut graeci definitiones. His ne melius vituperata scriptorem, cum paulo copiosae conclusionemque at. Facer inermis ius in, ad brute nominati referrentur vis. Dicat erant sit ex. Phaedrum imperdiet scribentur vix no, ad latine similique forensibus vel.</p>
+                <p>Dolore populo vivendum vis eu, mei quaestio liberavisse ex. Electram necessitatibus ut vel, quo at probatus oportere, molestie conclusionemque pri cu. Brute augue tincidunt vim id, ne munere fierent rationibus mei. Ut pro volutpat praesent qualisque, an iisque scripta intellegebat eam.</p>
+                <p>Mea ea nonumy labores lobortis, duo quaestio antiopam inimicus et. Ea natum solet iisque quo, prodesset mnesarchum ne vim. Sonet detraxit temporibus no has. Omnium blandit in vim, mea at omnium oblique.</p>
+                <p>Eum ea quidam oportere imperdiet, facer oportere vituperatoribus eu vix, mea ei iisque legendos hendrerit. Blandit comprehensam eu his, ad eros veniam ridens eum. Id odio lobortis elaboraret pro. Vix te fabulas partiendo.</p>
+                <p>Natum oportere et qui, vis graeco tincidunt instructior an, autem elitr noster per et. Mea eu mundi qualisque. Quo nemore nusquam vituperata et, mea ut abhorreant deseruisse, cu nostrud postulant dissentias qui. Postea tincidunt vel eu.</p>
+                <p>Ad eos alia inermis nominavi, eum nibh docendi definitionem no. Ius eu stet mucius nonumes, no mea facilis philosophia necessitatibus. Te eam vidit iisque legendos, vero meliore deserunt ius ea. An qui inimicus inciderint.</p>
+            </div>
+        </div>
+    </div>-->
+
+   <!-- <div class="form-group">
+        <div class="col-xs-6 col-xs-offset-3">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="agree" value="agree" /> Agree with the terms and conditions
+                </label>
+            </div>
+        </div>
+    </div>
+-->
+    <div class="form-group">
+        <div class="col-xs-9 col-xs-offset-3">
+            <button class="btn btn-primary" name="signup" value="Sign up" id='registro' >Submit</button>
+        </div>
+    </div>
+</div>
+    </div>
+  </div>
+
+
+
+
+  </div>
+</body>
+</html>

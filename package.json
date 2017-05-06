@@ -1,0 +1,17 @@
+{
+  "name": "n",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "*",
+    "jsonwebtoken": "^5.7.0",
+    "mongoose": "^4.4.5",
+    "morgan": "^1.7.0",
+    "mysql": "*",
+    "path":"*",
+    "cors":"*",
+    "geoip-lite":"*",
+    "request-ip":"*",
+    "ejs":"*"
+  }
+}

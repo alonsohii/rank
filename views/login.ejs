@@ -26,8 +26,18 @@ $(document).ready(function() {
         $.post( "http://localhost:8080/api/authenticate", { name: $('#email').val() , password: $('#pw').val() })
           .done(function(data) {
            // alert( "second success" );
-           localStorage.setItem('tk', data.token);
-           window.location="/home";
+           debugger;
+           if(data.success){
+
+               localStorage.setItem('tk', data.token);
+               window.location="/home";
+
+           }else{
+            $("#Notificacion").hide(350);
+            $("#Notificacion").show(350);
+            $("#textnot").text("Error:Su correo o usuario no son correctos.");
+           }
+
           // debugger;
           })
           .fail(function() {
@@ -42,25 +52,7 @@ $(document).ready(function() {
 
 </head>
 <body>
-  <div style="margin:100px;">
-    <nav class="navbar navbar-inverse navbar-static-top">
-  <div class="container">
-    <a class="navbar-brand" href="/">Express HTML</a>
-    <ul class="nav navbar-nav">
-      <li class="active">
-        <a href="/">Home</a>
-      </li>
-      <li>
-        <a href="/about">About</a>
-      </li>
-      <li>
-        <a href="/sitemap">Sitemap</a>
-      </li>
-    </ul>
-  </div>
-</nav>
-
-
+<%- include('header'); %>
 <div class="container containerBorder">
   <div class="row">
 <div class="col-xs-12" id="demoContainer">

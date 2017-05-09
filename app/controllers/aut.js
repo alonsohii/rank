@@ -35,6 +35,8 @@ exports.autentificar = function(req, res) {
 					expiresIn: 86400 // expires in 24 hours
 				});
 
+				console.log(token);
+
 				res.json({
 					success: true,
 					message: 'Enjoy your token!',
@@ -48,23 +50,13 @@ exports.autentificar = function(req, res) {
 }
 
 
-// https://www.sitepoint.com/using-node-mysql-javascript-client/
-
 exports.autentificarMysql = function(req,res){
 
 
-const secret = 'webos con frijoles@327';
-const hash = crypto.createHmac('sha256', secret)
-                   .update(req.body.password)
-                   .digest('hex');
-
-
-console.log(hash);
-console.log(req.body.name);
-
- db.query('SELECT correo, pw FROM projectb.bp_personas    WHERE correo = "' + req.body.name + '"'  /* + 'AND password =' [hash] */ , function(err, rows, fields) {
+ db.query('SELECT correo, pw FROM rank.bp_personas    WHERE correo = "' + req.body.name + '"'  /* + 'AND password =' [hash] */ , function(err, rows, fields) {
 
 if(rows != undefined){
+	  
 
 		const secret = 'webos con frijoles@327';
      	const hash = crypto.createHmac('sha256', secret)

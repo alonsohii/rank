@@ -1,3 +1,5 @@
+const nodemailer = require('nodemailer');
+
 exports.Query = function(db,query){
 var rowss ;
 db.query(query, function(err, rows, fields) {
@@ -49,6 +51,24 @@ module.exports.Pagina  = function(url,ruta,param,app){
       res.status(200);
 	//res.sendFile(path.join(__dirname+'/app/views/registro.html'), { name: "example" });
 	});
+}
+
+module.exports.mail = function(mailOptions){
+
+                    let transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: 'alonsosendmail@gmail.com',
+                            pass: 'marioalonso77'
+                        }
+                    });
+
+                   transporter.sendMail(mailOptions, (error, info) => {
+                        if (error) {
+                            return console.log(error);
+                        }
+                        console.log('Message %s sent: %s', info.messageId, info.response);
+                    });
 }
 
 module.exports.Config = function(app){

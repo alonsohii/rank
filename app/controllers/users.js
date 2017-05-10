@@ -57,30 +57,13 @@ const hash = crypto.createHmac('sha256', secret)
                     console.log('Last insert ID:', ress.insertId);   
                     res.json({ success: true });     
 
-                    let transporter = nodemailer.createTransport({
-                        service: 'gmail',
-                        auth: {
-                            user: 'alonsosendmail@gmail.com',
-                            pass: 'marioalonso77'
-                        }
-                    });
-
-                    // setup email data with unicode symbols
-                    let mailOptions = {
+                    Helper.mail({
                         from: '"Alonso 👻" <alonsosendmail@gmail.com>', // sender address
                         to: 'alonsioh@gmail.com', // list of receivers
                         subject: 'Hola '+usuario.username, // Subject line
                         text: 'Saludos '+usuario.username+'!', // plain text body
                         html: '<b>  '+'Saludos '+usuario.nombre+'!'+ '</b>' // html body
-                    };
-
-                    // send mail with defined transport object
-                  /*  transporter.sendMail(mailOptions, (error, info) => {
-                        if (error) {
-                            return console.log(error);
-                        }
-                        console.log('Message %s sent: %s', info.messageId, info.response);
-                    });*/
+                    });
 
                   }
 
@@ -103,11 +86,12 @@ const hash = crypto.createHmac('sha256', secret)
 exports.RandomPassword = function(req,res){
 
 
+
     Helper.Query(function(data){
 
-       if(data=='nodata'){
+       if(data!='nodata'){
           
-          db.query('INSERT INTO bp_personas SET ?', usuario, function(err,ress){
+          db.query('UPDATE bp_personas SET pw = :Password WHERE correo = :Correo', {Correo: email, Password: pw}, function(err,ress){
 
             if(!err){
 
@@ -116,7 +100,18 @@ exports.RandomPassword = function(req,res){
                   if(rows==null){
                     res.status(400);  res.send(err);  throw err;
                   }else{
-                    console.log('Last insert ID:', ress.insertId);   
+                    console.log('Se genera password:', ress.insertId);   
+
+
+                    Helper.mail({
+                        from: '"Alonso 👻" <alonsosendmail@gmail.com>', // sender address
+                        to: 'alonsioh@gmail.com', // list of receivers
+                        subject: 'Hola '+usuario.username, // Subject line
+                        text: 'Saludos '+usuario.username+'!', // plain text body
+                        html: '<b>  '+'Saludos '+usuario.nombre+'!'+ '</b>' // html body
+                    });
+
+
                     res.json({ success: true });     
 
                   }

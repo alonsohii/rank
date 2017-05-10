@@ -17,89 +17,49 @@
   <link rel="stylesheet" href="../css/adicional.css">
 
   <script>
-
+  
 $(document).ready(function() {
          $("#Notificacion").hide();
           $("#Correcto").hide();
      $("#registro").click(function(){
         
           var nombre = $("#firstName").val(),
-              apellidos = $("#lastName").val(),
+              facebook = $("#facebook").val(),
               pw = $("#pw").val(),
               pw2 = $("#pw2").val(),
               email = $("#email").val(),
               pais = $("#ComboPaises").val();
 
-              var val;
-              var error = -1;
+
 debugger;
-               val = validar(nombre,'Nombre');
-              if(val=='valid'){
-                val = validar(apellidos,'Apellido');
-                if(val=='valid'){
-                    val = validar(email,'Email');
-                    if(val=='valid'){
-                        val = validar(pw,'Password');
-                        if(val=='valid'){
-                            if(pw==pw2){
+var esvalido  = false;
+var campos = ["Nombre", "facebook", "Email","Password"];
+var valores = [nombre, facebook, email,pw];
+  esvalido = validarCampos(valores,campos);
 
-
-                                 $.post( "http://localhost:8080/usuario", CamposJson('#firstName,#lastName,#pw,#email,#ComboPaises'))
+if(esvalido){
+  if(pw==pw2){
+       $("#Correcto").hide(50);
+       $("#Correcto").show(350);
+       $("#Notificacion").hide(350);
+                                 $.post( "http://localhost:8080/usuario", CamposJson('#firstName,#facebook,#pw,#email,#ComboPaises'))
                                   .done(function( data ) {
-
                                     if(!data.success){
-                                        error=1;
-                                        val = 'Este correo ya se encuentra registrado.';
+                                         Error('Este correo ya se encuentra registrado.');
                                     }else{
-                                        error = 0;
-                                        val= 'Registro Correcto';
+                                       
                                     }
 
-                                    if(error==0){
-                                        $("#Notificacion").hide(350);
-                                        $("#Correcto").show(350);
-                                     }else{
-                                        $("#Notificacion").hide(350);
-                                        $("#Notificacion").show(350);
-                                           $("#Correcto").hide(350);
-                                         $("#textnot").text(val);
-                                     }
-
-
                                   });
-                                  
-
-                            }else{
-                                error=1;
-                                val = 'Las contrasenas no coinciden';
-                            }
-                        }else{
-                            error=1;
-                        }
-                    }else{
-                        error=1;
-                    }
-
-                }else{
-                    error=1;
-                }
-
-             }else{
-                error=1;
-             }
-
-    if(error==0){
-        $("#Notificacion").hide(350);
-        $("#Correcto").show(350);
-    }else{
-        $("#Notificacion").hide(350);
-        $("#Notificacion").show(350);
-        $("#Correcto").hide(350);
-        val = (error == -1) ?  'Error interno del servicio web' :  val;  
-        $("#textnot").text(val);
-    }
 
 
+  }else{
+         Error('La contrasena no coincide.');
+
+  }
+}else{
+
+}
 
       });
 
@@ -121,13 +81,11 @@ debugger;
                 <div id="registrationForm2" class="form-horizontal fv-form fv-form-bootstrap" novalidate="novalidate"  target="none" action="">
                  <!--  <button type="submit" class="fv-hidden-submit" style="display: none; width: 0px; height: 0px;"></button> -->
     <div class="form-group">
-        <label class="col-xs-3 control-label">Full name</label>
+        <label class="col-xs-3 control-label">Username</label>
         <div class="col-xs-4">
-            <input type="text" class="form-control" name="firstName" id="firstName" placeholder="First name" />
+            <input type="text" class="form-control" name="firstName" id="firstName" placeholder="Nombre de usuario ej:pamfilo" />
         </div>
-        <div class="col-xs-4">
-            <input type="text" class="form-control" name="lastName" id="lastName" placeholder="Last name" />
-        </div>
+
     </div>
 
    <!-- <div class="form-group">
@@ -137,10 +95,17 @@ debugger;
         </div>
     </div> -->
 
+        <div class="form-group">
+        <label class="col-xs-3 control-label">Facebook</label>
+        <div class="col-xs-5">
+            <input type="text" class="form-control" name="facebook" id="facebook" placeholder="www.facebook.com/usuariofb" />
+        </div>
+    </div>
+
     <div class="form-group">
         <label class="col-xs-3 control-label">Email address</label>
         <div class="col-xs-5">
-            <input type="text" class="form-control" name="email" id="email" />
+            <input type="text" class="form-control" name="email" id="email"    placeholder="micorreo@correo.com"  />
         </div>
     </div>
 
@@ -245,33 +210,10 @@ debugger;
         </div> -->
     </div>
 
-   <!-- <div class="form-group">
-        <label class="col-xs-3 control-label">Terms of use</label>
-        <div class="col-xs-9">
-            <div style="border: 1px solid #e5e5e5; height: 200px; overflow: auto; padding: 10px;">
-                <p>Lorem ipsum dolor sit amet, veniam numquam has te. No suas nonumes recusabo mea, est ut graeci definitiones. His ne melius vituperata scriptorem, cum paulo copiosae conclusionemque at. Facer inermis ius in, ad brute nominati referrentur vis. Dicat erant sit ex. Phaedrum imperdiet scribentur vix no, ad latine similique forensibus vel.</p>
-                <p>Dolore populo vivendum vis eu, mei quaestio liberavisse ex. Electram necessitatibus ut vel, quo at probatus oportere, molestie conclusionemque pri cu. Brute augue tincidunt vim id, ne munere fierent rationibus mei. Ut pro volutpat praesent qualisque, an iisque scripta intellegebat eam.</p>
-                <p>Mea ea nonumy labores lobortis, duo quaestio antiopam inimicus et. Ea natum solet iisque quo, prodesset mnesarchum ne vim. Sonet detraxit temporibus no has. Omnium blandit in vim, mea at omnium oblique.</p>
-                <p>Eum ea quidam oportere imperdiet, facer oportere vituperatoribus eu vix, mea ei iisque legendos hendrerit. Blandit comprehensam eu his, ad eros veniam ridens eum. Id odio lobortis elaboraret pro. Vix te fabulas partiendo.</p>
-                <p>Natum oportere et qui, vis graeco tincidunt instructior an, autem elitr noster per et. Mea eu mundi qualisque. Quo nemore nusquam vituperata et, mea ut abhorreant deseruisse, cu nostrud postulant dissentias qui. Postea tincidunt vel eu.</p>
-                <p>Ad eos alia inermis nominavi, eum nibh docendi definitionem no. Ius eu stet mucius nonumes, no mea facilis philosophia necessitatibus. Te eam vidit iisque legendos, vero meliore deserunt ius ea. An qui inimicus inciderint.</p>
-            </div>
-        </div>
-    </div>-->
 
-   <!-- <div class="form-group">
-        <div class="col-xs-6 col-xs-offset-3">
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" name="agree" value="agree" /> Agree with the terms and conditions
-                </label>
-            </div>
-        </div>
-    </div>
--->
     <div class="form-group">
         <div class="col-xs-9 col-xs-offset-3">
-            <button class="btn btn-primary" name="signup" value="Sign up" id='registro' >Submit</button>
+            <button class="btn btn-primary" name="signup" value="Sign up" id='registro' >Registro</button>
         </div>
     </div>
 </div>

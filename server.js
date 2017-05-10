@@ -39,11 +39,17 @@ app.use(express.static(__dirname + '/public'));
 // Paginas
 
 app.post('/usuario', UsuariosCtrl.InsertarUsuario );
+app.post('/reset', UsuariosCtrl.RandomPassword );
 
 Helper.Pagina('/registro','registro',{ title: "Registro de Usuarios"} , app);
 Helper.Pagina('/login','login',{ title: "Registro de Usuarios"} , app);
 Helper.Pagina('/demo','registro',{ title: "Diferente"},app);
 Helper.Pagina('/home','home',{ title: "Inicio"},app);
+
+Helper.Pagina('/generar','generar',{ title: "Reset Password"},app);
+
+
+
 //
 
 // Paginas Mongo
@@ -65,6 +71,8 @@ var apiRoutes = express.Router();
 // ---------------------------------------------------------
 // http://localhost:8080/api/authenticate
 apiRoutes.post('/authenticate', AutCtrl.autentificarMysql);
+
+
 
 // ---------------------------------------------------------
 // route middleware to authenticate and check token

@@ -62,7 +62,8 @@ if(rows != undefined){
      	const hash = crypto.createHmac('sha256', secret)
 	                   .update(req.body.password)
 	                   .digest('hex');
-
+console.log(hash);
+console.log(rows[0].pw)
 
  	    if (rows[0].pw != hash) {
 				res.json({ success: false, message: 'Authentication failed. Wrong password.' });

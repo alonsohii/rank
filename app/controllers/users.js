@@ -5,6 +5,8 @@ var mongoose = require('mongoose'),
     Helper   = require('../helpers/general'); // get helper
     crypto = require('crypto');
     const nodemailer = require('nodemailer');
+    var generator = require('generate-password');
+    var crypto = require('crypto');
 
 exports.InsertarUsuario = function(req,res){
 
@@ -40,83 +42,95 @@ const hash = crypto.createHmac('sha256', secret)
     fb:data.facebook
   };
 
-
   Helper.Query(function(data){
+console.log(usuario.username);
+     if(data=='nodata'){
 
-       if(data=='nodata'){
-          
-          db.query('INSERT INTO bp_personas SET ?', usuario, function(err,ress){
+        Helper.Query(function(data){
 
-            if(!err){
+             if(data=='nodata'){
+                
+                db.query('INSERT INTO bp_personas SET ?', usuario, function(err,ress){
 
-              Helper.Query(function(rows){
+                  if(!err){
 
-                  if(rows==null){
-                    res.status(400);  res.send(err);  throw err;
-                  }else{
-                    console.log('Last insert ID:', ress.insertId);   
-                    res.json({ success: true });     
+                    Helper.Query(function(rows){
 
-                    Helper.mail({
-                        from: '"Alonso 👻" <alonsosendmail@gmail.com>', // sender address
-                        to: 'alonsioh@gmail.com', // list of receivers
-                        subject: 'Hola '+usuario.username, // Subject line
-                        text: 'Saludos '+usuario.username+'!', // plain text body
-                        html: '<b>  '+'Saludos '+usuario.nombre+'!'+ '</b>' // html body
-                    });
+                        if(rows==null){
+                          res.status(400);  res.send(err);  throw err;
+                        }else{
+                          console.log('Last insert ID:', ress.insertId);   
+                          res.json({ success: true });     
 
+                       /*   Helper.mail({
+                              from: '"Alonso 👻" <alonsosendmail@gmail.com>', // sender address
+                              to: 'alonsioh@gmail.com', // list of receivers
+                              subject: 'Hola '+usuario.username, // Subject line
+                              text: 'Saludos '+usuario.username+'!', // plain text body
+                              html: '<b>  '+'Saludos '+usuario.nombre+'!'+ '</b>' // html body
+                          });*/
+
+                        }
+
+                    },"SELECT idbp_personas FROM bp_personas ed  WHERE ed.correo= '"+usuario.correo+"' and ed.nombre = '"+usuario.nombre+"'",db);
+
+                  }else {
+                   res.status(400);  res.send(err);  throw err;
                   }
+                });
 
-              },"SELECT idbp_personas FROM bp_personas ed  WHERE ed.correo= '"+usuario.correo+"' and ed.nombre = '"+usuario.nombre+"'",db);
+             }else{
+                 res.json({ success: false, correo:1 });     
+             }
 
-            }else {
-             res.status(400);  res.send(err);  throw err;
-            }
-          });
+        },"SELECT idbp_personas FROM bp_personas ed  WHERE ed.correo= '"+usuario.correo+"'",db);
 
-       }else{
-           res.json({ success: false });     
-       }
 
-  },"SELECT idbp_personas FROM bp_personas ed  WHERE ed.correo= '"+usuario.correo+"'",db);
+     }else{
+        res.json({ success: false , usuario:1 });     
+     }
+
+  },"SELECT idbp_personas FROM bp_personas ed  WHERE ed.username= '"+usuario.username+"'",db);
 
 
 }
 
 exports.RandomPassword = function(req,res){
 
-
+  var usuario = req.body;
 
     Helper.Query(function(data){
-
+      
        if(data!='nodata'){
-          
-          db.query('UPDATE bp_personas SET pw = :Password WHERE correo = :Correo', {Correo: email, Password: pw}, function(err,ress){
 
+        var pass = generator.generate({
+            length: 10,
+            numbers: true
+        });
+
+       const secret = 'webos con frijoles@327';
+       const hash = crypto.createHmac('sha256', secret)
+               .update(pass)
+               .digest('hex');
+
+          var sql = 'UPDATE bp_personas SET pw = ? WHERE correo = ?';
+          console.log(usuario.email);
+          db.query(sql,[hash, usuario.email], function(err,ress){
+         
             if(!err){
-
-              Helper.Query(function(rows){
-
-                  if(rows==null){
-                    res.status(400);  res.send(err);  throw err;
-                  }else{
                     console.log('Se genera password:', ress.insertId);   
 
 
                     Helper.mail({
                         from: '"Alonso 👻" <alonsosendmail@gmail.com>', // sender address
                         to: 'alonsioh@gmail.com', // list of receivers
-                        subject: 'Hola '+usuario.username, // Subject line
-                        text: 'Saludos '+usuario.username+'!', // plain text body
-                        html: '<b>  '+'Saludos '+usuario.nombre+'!'+ '</b>' // html body
+                        subject: 'Hola '+usuario.email, // Subject line
+                        text: 'Su nuevo password es  '+pass+'', // plain text body
+                        html: '<b>  '+'Su nuevo password es  '+pass+''+ '</b>' // html body
                     });
 
-
+                    console.log('pasa');
                     res.json({ success: true });     
-
-                  }
-
-              },"SELECT idbp_personas FROM bp_personas ed  WHERE ed.correo= '"+usuario.correo+"' and ed.nombre = '"+usuario.nombre+"'",db);
 
             }else {
              res.status(400);  res.send(err);  throw err;
@@ -124,10 +138,10 @@ exports.RandomPassword = function(req,res){
           });
 
        }else{
-           res.json({ success: false });     
+           res.json({ success: false });     res.status(400);
        }
 
-  },"SELECT idbp_personas FROM bp_personas ed  WHERE ed.correo= '"+usuario.correo+"'",db);
+  },"SELECT idbp_personas FROM bp_personas ed  WHERE ed.correo= '"+usuario.email+"'",db);
 
 }
 

@@ -1,4 +1,8 @@
 const nodemailer = require('nodemailer');
+var express   = require('express');
+var Middleware = require('../../app/middleware');
+var apiRoutes = express.Router(); 
+apiRoutes.use(Middleware.Verificar);
 
 exports.Query = function(db,query){
 var rowss ;
@@ -45,13 +49,31 @@ module.exports.Error = function (res,error){
 }
 
 module.exports.Pagina  = function(url,ruta,param,app){
-	app.get(url,function(req,res){  
-	// res.set('Content-Type', 'application/javascript');
-	  res.render(ruta, param);
+  app.get(url,function(req,res){  
+  // res.set('Content-Type', 'application/javascript');
+    res.render(ruta, param);
       res.status(200);
-	//res.sendFile(path.join(__dirname+'/app/views/registro.html'), { name: "example" });
-	});
+  //res.sendFile(path.join(__dirname+'/app/views/registro.html'), { name: "example" });
+  });
 }
+
+
+module.exports.PgApi  = function(url,ruta,param,app){
+
+//  apiRoutes.get('/match', UsuariosCtrl.getUsers );
+  apiRoutes.get(url,function(req,res){  
+  // res.set('Content-Type', 'application/javascript');
+    res.render(ruta, param);
+      res.status(200);
+  //res.sendFile(path.join(__dirname+'/app/views/registro.html'), { name: "example" });
+  });
+
+   app.use('/api', apiRoutes);
+   
+}
+
+
+
 
 module.exports.mail = function(mailOptions){
 

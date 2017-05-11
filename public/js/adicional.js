@@ -1,12 +1,27 @@
 function CamposJson(ids){
 // '#firstName, #lastName,#phoneNumber,#address'
-var $items = $(ids)
-var obj = {}
-$items.each(function() {
-    obj[this.id] = $(this).val();
-})
+  var $items = $(ids)
+  var obj = {}
+  $items.each(function() {
+      obj[this.id] = $(this).val();
+  })
 
-return obj;// JSON.stringify( obj);
+  return obj;// JSON.stringify( obj);
+}
+
+
+
+function CamposJsonObj(ids,outPar){
+// '#firstName, #lastName,#phoneNumber,#address'
+  var $items = $(ids)
+  var obj = {}
+  $items.each(function() {
+      obj[this.id] = $(this).val();
+  })
+
+  return obj;// JSON.stringify( obj);
+
+  debugger;
 }
 
   function validar(str,campo){

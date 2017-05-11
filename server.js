@@ -42,13 +42,11 @@ app.post('/usuario', UsuariosCtrl.InsertarUsuario );
 app.post('/reset', UsuariosCtrl.RandomPassword );
 
 Helper.Pagina('/registro','registro',{ title: "Registro de Usuarios"} , app);
-Helper.Pagina('/login','login',{ title: "Registro de Usuarios"} , app);
+Helper.Pagina('/login','login',{ title: "Acceso"} , app);
 Helper.Pagina('/demo','registro',{ title: "Diferente"},app);
 Helper.Pagina('/home','home',{ title: "Inicio"},app);
 
 Helper.Pagina('/generar','generar',{ title: "Reset Password"},app);
-
-
 
 //
 
@@ -93,10 +91,19 @@ apiRoutes.get('/users', function(req, res) {
 });
 
 apiRoutes.get('/check', function(req, res) {
-	res.json(req.decoded);
+    res.json(req.decoded);
 });
 
+apiRoutes.get('/usuarios', UsuariosCtrl.getUsers );
+
 app.use('/api', apiRoutes);
+
+
+//============================================
+// Paginas token
+//============================================
+
+Helper.PgApi('/match','match',{ title: "Inicio"},app);
 
 // =================================================================
 // start the server ================================================

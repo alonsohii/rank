@@ -43,7 +43,7 @@ const hash = crypto.createHmac('sha256', secret)
   };
 
   Helper.Query(function(data){
-console.log(usuario.username);
+
      if(data=='nodata'){
 
         Helper.Query(function(data){
@@ -145,6 +145,21 @@ exports.RandomPassword = function(req,res){
 
 }
 
+exports.getUsers = function(req,res){
+
+  Helper.Query(function(data){
+      
+       if(data!='nodata'){
+            res.setHeader('Content-Type', 'application/json');
+            res.json(data);
+       }else{
+           res.json({ success: false });     res.status(400);
+       }
+
+  },"SELECT  idbp_personas , username , nombre FROM bp_personas",db);
+
+}
+
 
 exports.UsuarioMongoDb = function(req,res){
 
@@ -163,3 +178,14 @@ exports.UsuarioMongoDb = function(req,res){
 
 }
 
+/*
+  Helper.Query(function(data){
+      
+       if(data!='nodata'){
+
+       }else{
+           res.json({ success: false });     res.status(400);
+       }
+
+  },"SELECT idbp_personas FROM bp_personas ed  WHERE ed.correo= '"+usuario.email+"'",db);
+  */

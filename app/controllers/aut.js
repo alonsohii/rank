@@ -32,7 +32,7 @@ exports.autentificar = function(req, res) {
 				// if user is found and password is right
 				// create a token
 				var token = jwt.sign(user, app.get('superSecret'), {
-					expiresIn: 86400 // expires in 24 hours
+					expiresIn: 106400 // expires in 24 hours
 				});
 
 				console.log(token);

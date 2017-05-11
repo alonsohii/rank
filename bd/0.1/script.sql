@@ -1,0 +1,1 @@
+INSERT INTO `catpersonaestado` (`idcatPersonaEstado`, `descripcion`, `dummy`) VALUES ('0', 'demo', NULL);

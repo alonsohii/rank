@@ -93,8 +93,11 @@ apiRoutes.get('/users', function(req, res) {
 apiRoutes.get('/check', function(req, res) {
     res.json(req.decoded);
 });
+// Gets
+apiRoutes.get('/usuarios', UsuariosCtrl.getUsers);
 
-apiRoutes.get('/usuarios', UsuariosCtrl.getUsers );
+// Post
+apiRoutes.get('/getuser', UsuariosCtrl.UserData);
 
 app.use('/api', apiRoutes);
 

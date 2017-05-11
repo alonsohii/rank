@@ -1,12 +1,17 @@
 var mongoose = require('mongoose'),
+    express   = require('express'),
     User   = require('../models/user'), // get our mongoose model
     db = require('../connection'),
+    app         = express(),
     User   = require('../models/user'), // get our mongoose model
     Helper   = require('../helpers/general'); // get helper
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    jwt    = require('jsonwebtoken'), // used to create, sign, and verify tokens
+    config = require('../../config');// get our config file
     const nodemailer = require('nodemailer');
     var generator = require('generate-password');
     var crypto = require('crypto');
+    app.set('superSecret', config.secret); // secret variable
 
 exports.InsertarUsuario = function(req,res){
 
@@ -156,7 +161,7 @@ exports.getUsers = function(req,res){
            res.json({ success: false });     res.status(400);
        }
 
-  },"SELECT  idbp_personas , username , nombre FROM bp_personas",db);
+  },"SELECT  idbp_personas as id , username as nombre , nombre as name FROM bp_personas",db);
 
 }
 
@@ -174,18 +179,30 @@ exports.UsuarioMongoDb = function(req,res){
     console.log('User saved successfully');
     res.json({ success: true });
   });
+}
 
+exports.UserData = function(req,res){
 
+  var datos = req.decoded;
+  
+ console.log(datos);
+
+  Helper.Query(function(data){     
+       if(data!='nodata'){
+             res.setHeader('Content-Type', 'application/json');
+             res.json(data);
+       }else{
+           res.json({ success: false });     res.status(400);
+       }
+  },"SELECT idbp_personas AS id , username AS usuario, correo  AS mail, coins  as moneda   FROM bp_personas ed  WHERE ed.correo= '"+datos.correo+"'",db);
 }
 
 /*
-  Helper.Query(function(data){
-      
+  Helper.Query(function(data){     
        if(data!='nodata'){
 
        }else{
            res.json({ success: false });     res.status(400);
        }
-
   },"SELECT idbp_personas FROM bp_personas ed  WHERE ed.correo= '"+usuario.email+"'",db);
   */

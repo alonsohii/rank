@@ -255,10 +255,10 @@ if(esvalido){
     <div class="form-group">
         <label class="col-xs-3 control-label">Partida</label>
         <div class="col-xs-4">
-            <input type="text" class="form-control custoComb" name="firstName" id="firstName" placeholder="0" value='usuario' />
+            <input type="text" class="form-control custoComb" name="local" id="local" placeholder="" value='' disabled="" />
         </div>
         <div class="col-xs-4">
-            <select class="form-control" name="color" id="combobox">
+            <select class="form-control" name="visitante" id="combobox">
                
             </select>
         </div>
@@ -277,26 +277,24 @@ if(esvalido){
     <script>
 
     $(function() {
-
-        $.when( $.get("http://localhost:8080/paises", function(data, status){
-           
-            jQuery.data( document, "paises",data );
-              //console.log("Data: " + data + "\nStatus: " + status);
-          })).then(function( data, textStatus, jqXHR ) {
-            // Paises();
-         
-            ComboPaises();
-
-
-             // GroupBy(jQuery.data( document, "paises"));
-         // alert( jqXHR.status ); // Alerts 200
-        });
+      $.when($.get("http://localhost:8080/api/getuser?token="+localStorage.getItem('tk'), function(data, status){
           
+            jQuery.data( document, "usuario",data );
 
-         
-         
+       })).then(function( data, textStatus, jqXHR ) {
+           $('#local').val(jQuery.data( document, "usuario")[0].usuario);
+           
+        });  
+
+        $.when( $.get("http://localhost:8080/api/usuarios?token="+localStorage.getItem('tk'), function(data, status){
+          
+            jQuery.data( document, "paises",data );
+
+          })).then(function( data, textStatus, jqXHR ) {
+            ComboUsuarios();
+        });      
     });
-3
+
     function Where(data,value){
      return  _.filter(data, function(item, index) {
          return _.contains([value], item.iso);
@@ -306,15 +304,16 @@ if(esvalido){
 var adress;
 var idpais;
 
-    function ComboPaises(){
+    function ComboUsuarios(){
 
 
 
         $.when($.getJSON('http://api.wipmania.com/jsonp?callback=?', function (data) {
                 adress =  data.address.country;
             })).then(function( data, textStatus, jqXHR ) {
-           $.each(   GroupBy(jQuery.data( document, "paises")), function( i, l ){
-            $( "#combobox" ).append( " <option value='"+l.Id+"'>" + l.Pais +"</option>" );
+           $.each(   jQuery.data( document, "paises"), function( i, l ){
+            debugger;
+            $( "#combobox" ).append( " <option value='"+l.id+"'>" + l.nombre +"</option>" );
            if(adress == l.Pais ){
                idpais = l.Id;
             }
@@ -353,7 +352,7 @@ var idpais;
 
     <div class="form-group">
         <div class="col-xs-9 col-xs-offset-3">
-            <button class="btn btn-primary" name="signup" value="Sign up" id='registro' >Registro</button>
+            <button class="btn btn-primary" name="signup" value="Sign up" id='registro' >Retar ahora!</button>
         </div>
     </div>
 </div>

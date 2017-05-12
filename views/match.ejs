@@ -186,32 +186,30 @@
 $(document).ready(function() {
          $("#Notificacion").hide();
           $("#Correcto").hide();
-     $("#registro").click(function(){
+         $("#registro").click(function(){
         
-          var nombre = $("#firstName").val(),
-              facebook = $("#facebook").val(),
-              pw = $("#pw").val(),
-              pw2 = $("#pw2").val(),
-              email = $("#email").val(),
-              pais = $("#ComboPaises").val();
+          var contrincante = $("#combobox").val();
 
-
-
+debugger;
 var esvalido  = false;
-var campos = ["Nombre", "facebook", "Email","Password"];
-var valores = [nombre, facebook, email,pw];
+var campos = ["Contrincante"];
+var valores = [contrincante];
   esvalido = validarCampos(valores,campos);
 
 if(esvalido){
-  if(pw==pw2){
+
+var camposjson = CamposJson('#combobox');
+camposjson.retador = jQuery.data( document, "usuario")[0].id.toString();
+camposjson.retadorStr =  jQuery.data( document, "usuario")[0].usuario
+camposjson.visitante = $( "#combobox option:selected" ).text();
 
        $("#Notificacion").hide(350);
-                                 $.post( "http://localhost:8080/usuario", CamposJson('#firstName,#facebook,#pw,#email,#ComboPaises'))
+                                 $.post( "http://localhost:8080/api/reto?token="+localStorage.getItem('tk'), camposjson )
                                   .done(function( data ) {
 
 
-                                    if(data.usuario==1 && !data.success){
-                                         Error('Este usuario ya se encuentra registrado.');
+                                    if(!data.success){
+                                         Error('Surgio un error interno del servidor.');
                                     }else{
 
                                         if(!data.success){
@@ -225,10 +223,7 @@ if(esvalido){
                                   });
 
 
-  }else{
-         Error('La contrasena no coincide.');
 
-  }
 }else{
 
 }
@@ -255,7 +250,7 @@ if(esvalido){
     <div class="form-group">
         <label class="col-xs-3 control-label">Partida</label>
         <div class="col-xs-4">
-            <input type="text" class="form-control custoComb" name="local" id="local" placeholder="" value='' disabled="" />
+            <input type="text" class="form-control custoComb" name="local" id="local" placeholder="Contrincante" value='' disabled="" />
         </div>
         <div class="col-xs-4">
             <select class="form-control" name="visitante" id="combobox">
@@ -265,14 +260,6 @@ if(esvalido){
 
     </div>
 
-   <!-- <div class="form-group">
-        <label class="col-xs-3 control-label">Username</label>
-        <div class="col-xs-5">
-            <input type="text" class="form-control" name="username" />
-        </div>
-    </div> -->
-
-    
 
     <script>
 
@@ -312,7 +299,7 @@ var idpais;
                 adress =  data.address.country;
             })).then(function( data, textStatus, jqXHR ) {
            $.each(   jQuery.data( document, "paises"), function( i, l ){
-            debugger;
+
             $( "#combobox" ).append( " <option value='"+l.id+"'>" + l.nombre +"</option>" );
            if(adress == l.Pais ){
                idpais = l.Id;

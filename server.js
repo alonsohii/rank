@@ -6,6 +6,7 @@ var express 	= require('express'),
     config = require('./config'), // get our config file
     path    = require("path"),
     AutCtrl = require('./app/controllers/aut'),
+    MatchCtrl = require('./app/controllers/games'),
     UsuariosCtrl = require('./app/controllers/users'),
     PaisesCtrl = require('./app/controllers/catpaises'),
     Middleware = require('./app/middleware'),
@@ -95,9 +96,11 @@ apiRoutes.get('/check', function(req, res) {
 });
 // Gets
 apiRoutes.get('/usuarios', UsuariosCtrl.getUsers);
+apiRoutes.get('/getuser', UsuariosCtrl.UserData);
 
 // Post
-apiRoutes.get('/getuser', UsuariosCtrl.UserData);
+
+apiRoutes.post('/reto', MatchCtrl.AddMatch);
 
 app.use('/api', apiRoutes);
 

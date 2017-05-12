@@ -16,10 +16,14 @@
         <a href="/generar">Reset Password</a>
       </li>
       <li>
-        <a href="api/match?token=">Match</a>
+        <a   id='link' href="">Match</a>
       </li>
 
       
     </ul>
   </div>
 </nav>
+ <script> 
+  $( document ).ready(function() {
+    $('#link').attr("href", "api/match?token="+localStorage.getItem('tk'));
+});    </script> 

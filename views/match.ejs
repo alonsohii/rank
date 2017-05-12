@@ -194,7 +194,7 @@ debugger;
 var esvalido  = false;
 var campos = ["Contrincante"];
 var valores = [contrincante];
-  esvalido = validarCampos(valores,campos);
+  esvalido = validarCamposStr(valores,campos);
 
 if(esvalido){
 
@@ -206,21 +206,33 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
        $("#Notificacion").hide(350);
                                  $.post( "http://localhost:8080/api/reto?token="+localStorage.getItem('tk'), camposjson )
                                   .done(function( data ) {
-
-
-                                    if(!data.success){
-                                         Error('Surgio un error interno del servidor.');
-                                    }else{
-
-                                        if(!data.success){
-                                             Error('Este correo ya se encuentra registrado.');
+debugger;                          
+                                   if(data.sobrepasa){
+                                     Error('El limite es de 5 retos al dia con el mismo jugador , este se ha terminado.');
+                                   }else{ 
+                                       if(!data.success){
+                                             Error('Surgio un error interno del servidor.');
                                         }else{
-                                              $("#Correcto").hide(50);
-                                              $("#Correcto").show(350);
-                                        }
-                                    }
 
-                                  });
+                                            if(!data.success){
+                                                 Error('Este correo ya se encuentra registrado.');
+                                            }else{
+                                                  $("#Correcto").hide(50);
+                                                  $("#Correcto").html('Bien! Reto hecho  a '+camposjson.visitante+' correctamente te quedan '+data.conteo[0].COUNTEOS+' retos por hacer al mismo jugador');
+                                                  $("#Correcto").show(350);
+                                                  
+                                            }
+                                        }
+
+                                   }
+
+                                   
+                                  })
+                                   .fail(function(xhr, status, error) {
+                                         Error('Surgio un error interno del servidor.');
+                                            $("#Correcto").hide(50);
+                                          //  $("#Correcto").hide(350);
+                                    }) ;
 
 
 

@@ -35,12 +35,13 @@ exports.AddMatch = function(req,res){
         db.query('CALL USP_InsertMatch(?,?,?,?)',[post.retador, post.combobox, 0,null],function(err,rows){
             if(!err){
 
-                    console.log(rows[0].RowDataPacket);
-                    if(rows.RowDataPacket.RESULT == 'SI'){
+                    console.log(rows[0]);
+                    console.log(rows[0].r);
+                    if(rows[0].r == 'SI'){
 
                         Helper.mail({
                             from: '"GamerVita 👻" <alonsosendmail@gmail.com>', // sender address
-                            to: 'alonsioh@gmail.com', // list of receivers
+                            to: rows[0].correo , // list of receivers
                             subject: 'Te reto a un duelo! '+post.visitante + ' en GamerVita lo aceptas?', // Subject line
                             text: 'El usuario '+post.retadorStr+' te a retado aceptas su reto?', // plain text body
                             html: 'El usuario '+post.retadorStr+' te a retado aceptas su reto?' // html body
@@ -54,12 +55,13 @@ exports.AddMatch = function(req,res){
                             text: post.retadorStr+',Has retado espera a que tu contrincante acepte el duelo.', // plain text body
                             html: post.retadorStr+',Has retado espera a que tu contrincante acepte el duelo.' // html body
                         });
+                    
 
-
-                        res.json({ success: true , sobrepasa:0 }); 
+                        res.json({ success: true , sobrepasa:0, conteo:rows[0] }); 
 
                     }else{
-                        res.json({ success: true , sobrepasa:1 }); 
+
+                        res.json({ success: true , sobrepasa:1 ,conteo:rows[0] }); 
                     }
     
 

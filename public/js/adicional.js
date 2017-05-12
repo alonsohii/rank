@@ -39,6 +39,22 @@ function CamposJsonObj(ids,outPar){
 
 }
 
+
+  function validarStr(str,campo){
+    //debugger;
+    if(str != null && str != ''){
+        if(str.length < 100 &&  str.length > 0){
+            return 'isvalid';
+            
+        }else{
+            return 'El campo "'+campo+'" debe ser menor a 40 caracteres o mayor a 0.<br>';
+        }
+    }else{
+         return 'El campo "'+campo+'" no debe estar vacio.<br>';
+  }
+
+}
+
   function  validarCampos(valores,campos){
       var error = -1;
       var valido = ""; var val= "";
@@ -60,6 +76,32 @@ function CamposJsonObj(ids,outPar){
      }
       return campos.length == ValCount;
   }
+
+
+
+  function  validarCamposStr(valores,campos){
+      var error = -1;
+      var valido = ""; var val= "";
+      var ValCount =0;
+      for(x=0;x<campos.length;x++){
+         val += validarStr(valores[x],campos[x]);
+         valido = validarStr(valores[x],campos[x]);
+         if(valido  == 'isvalid' ){
+              ValCount++;
+         }
+      }
+     if(!(campos.length == ValCount)){
+        $("#Notificacion").hide(350);
+        $("#Notificacion").show(350);
+        $("#Correcto").hide(350);
+        $("#textnot").html(val.replace(/isvalid/g,''));  
+     }else{
+
+     }
+      return campos.length == ValCount;
+  }
+
+
 
   function Error(msj){
         $("#Notificacion").hide(350);

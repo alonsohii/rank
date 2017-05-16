@@ -34,14 +34,12 @@ exports.AddMatch = function(req,res){
 
         db.query('CALL USP_InsertMatch(?,?,?,?)',[post.retador, post.combobox, 0,null],function(err,rows){
             if(!err){
-
-                    console.log(rows[0]);
-                    console.log(rows[0].r);
-                    if(rows[0].r == 'SI'){
+//console.log(rows[0][0]);
+                    if(rows[0][0].r == 'SI'){
 
                         Helper.mail({
                             from: '"GamerVita 👻" <alonsosendmail@gmail.com>', // sender address
-                            to: rows[0].correo , // list of receivers
+                            to: rows[0][0].correo , // list of receivers
                             subject: 'Te reto a un duelo! '+post.visitante + ' en GamerVita lo aceptas?', // Subject line
                             text: 'El usuario '+post.retadorStr+' te a retado aceptas su reto?', // plain text body
                             html: 'El usuario '+post.retadorStr+' te a retado aceptas su reto?' // html body
@@ -80,6 +78,35 @@ exports.AddMatch = function(req,res){
 
 }
 
-function MaximoPartidos(){
+exports.Partidos = function(req,res){
+
+  var datos = req.query;
+
+
+        db.query('CALL USP_GetMatch(?,?)',[req.decoded.id, 2],function(err,rows){
+            if(!err){
+                 var obj  = new Object();
+                 res.setHeader('Content-Type', 'application/json');
+                 obj.current = 1;
+                 obj.rowCount = 10;
+                 obj.rows = rows[0];
+                 obj.total = rows[0].length;
+                 res.json(obj);
+
+            }else {
+             res.status(400);  res.send(err);  throw err;
+            }
+        });
+
 
 }
+
+/*
+        db.query('CALL USP_InsertMatch(?,?,?,?)',[post.retador, post.combobox, 0,null],function(err,rows){
+            if(!err){
+
+            }else {
+             res.status(400);  res.send(err);  throw err;
+            }
+        });
+        */

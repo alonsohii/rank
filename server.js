@@ -97,7 +97,8 @@ apiRoutes.get('/check', function(req, res) {
 // Gets
 apiRoutes.get('/usuarios', UsuariosCtrl.getUsers);
 apiRoutes.get('/getuser', UsuariosCtrl.UserData);
-
+apiRoutes.get('/partidos', MatchCtrl.Partidos);
+//apiRoutes.use(express.static(__dirname + '/public'));
 // Post
 
 apiRoutes.post('/reto', MatchCtrl.AddMatch);
@@ -110,6 +111,8 @@ app.use('/api', apiRoutes);
 //============================================
 
 Helper.PgApi('/match','match',{ title: "Inicio"},app);
+
+
 
 // =================================================================
 // start the server ================================================

@@ -1,1 +1,2 @@
 INSERT INTO `catpersonaestado` (`idcatPersonaEstado`, `descripcion`, `dummy`) VALUES ('0', 'demo', NULL);
+INSERT INTO `torneos` (`idtorneos`, `nombre`, `estado`, `fecha`, `creadorid`, `img`, `img2`, `descripcion`, `url`, `oficial`) VALUES (NULL, 'Ranking General', '1', CURRENT_TIMESTAMP, '0', 'img/rankoficial.png', NULL, NULL, NULL, '1');

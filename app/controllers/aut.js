@@ -53,24 +53,24 @@ exports.autentificar = function(req, res) {
 exports.autentificarMysql = function(req,res){
 
 
- db.query('SELECT correo, pw FROM rank.bp_personas    WHERE correo = "' + req.body.name + '"'  /* + 'AND password =' [hash] */ , function(err, rows, fields) {
+ db.query('SELECT idbp_personas as id , correo , pw as paw FROM rank.bp_personas    WHERE correo = "' + req.body.name + '"'  /* + 'AND password =' [hash] */ , function(err, rows, fields) {
 
-if(rows != undefined){
+if(rows.length>0){
 	  
 
 		const secret = 'webos con frijoles@327';
      	const hash = crypto.createHmac('sha256', secret)
 	                   .update(req.body.password)
 	                   .digest('hex');
-console.log(hash);
-console.log(rows[0].pw)
 
- 	    if (rows[0].pw != hash) {
+
+ 	    if (rows[0].paw != hash) {
 				res.json({ success: false, message: 'Authentication failed. Wrong password.' });
 			} else {
 
 				// if user is found and password is right
 				// create a token
+				rows[0].paw = null;
 				var token = jwt.sign(rows[0], app.get('superSecret'), {
 					expiresIn: 5000  // expires in 24 hours
 
@@ -85,8 +85,8 @@ console.log(rows[0].pw)
  
 
 }else{
-
-
+   
+    res.json({ success: false, message: 'This user dont exists.' });
 }
 
   

@@ -18,9 +18,11 @@ SELECT idbitgames , DATE_FORMAT(registro,'%b %d %Y %h:%i %p') as registro , uloc
 when accion = 3 then
 SELECT * FROM rank.v_retosbitgame where (v_retosbitgame.idlocal = 5 or v_retosbitgame.idvisitante = 5 )and Diferencia <6;
 when accion = 4 then
-UPDATE `bitgames` SET `estatus` = '4' WHERE `bitgames`.`idbitgames` = reto;
--- else set conteo =3;
-
+UPDATE `bitgames` SET `estatus` = '4' WHERE idbitgames = reto;
+SELECT estatus FROM bitgames WHERE idbitgames = reto;
+-- SELECT 'RETO CANCELADO';
 end case; 
 END //
 DELIMITER ;
+
+UPDATE `bitgames` SET `estatus` = '4' WHERE `bitgames`.`idbitgames` = 2;

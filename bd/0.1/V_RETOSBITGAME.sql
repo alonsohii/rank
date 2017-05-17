@@ -8,9 +8,10 @@ bg.fecha registro,
  bg.golvisitane,
 case  bg.estatus 
 	when  0  THEN 'En espera' 
-    when  1  THEN 'Activo' 
+    when  1  THEN 'Activo(Aceptado)' 
     when  2  THEN 'Finalizado' 
-    when  3  THEN 'Rechazado' 
+    when  3  THEN 'Rechazado'
+    when  4  THEN 'Cancelado' 
     else CASE When datediff(bg.fecha, now()) > 5 THEN 'Vencido' END
 end estatus, 
 -- ADDDATE(bg.fecha, INTERVAL 5 DAY) Dif , 

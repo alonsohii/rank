@@ -38,6 +38,34 @@
 
 
 <style>
+.red{
+  background-color:red;
+}
+div.grid_array *
+{
+    margin:auto 3px;
+}
+tr.red td
+{
+    background-color:red;
+    color:Green;    
+}
+tr.green td
+{
+    background:green;
+    color:yellow;    
+}
+tr td.green
+{
+    background:lightgreen;
+    color:Red;
+}
+tr td.red
+{
+    background:brown;
+    color:yellow;
+}
+
 input.filterValue{    
     border:1px solid #aaa;padding:1px 5px;
     margin:0px 5px;
@@ -66,23 +94,23 @@ input.filterValue{
   </style>
    <script type="text/javascript" src=" ../js/adicional.js"></script>
  <script>
-function formatDate(date) {
-  var hours = date.getHours();
-  var minutes = date.getMinutes();
-  var ampm = hours >= 12 ? 'pm' : 'am';
-  hours = hours % 12;
-  hours = hours ? hours : 12; // the hour '0' should be '12'
-  minutes = minutes < 10 ? '0'+minutes : minutes;
-  var strTime = hours + ':' + minutes + ' ' + ampm;
-  return date.getMonth()+1 + "/" + date.getDate() + "/" + date.getFullYear() + "  " + strTime;
-}
+
 
 function Reto(arg){
-  alert(arg);
+
+    if (confirm("Estas seguro?\nDeseas cancelar este reto")) { 
+
+       $.get("http://localhost:8080/api/CancelarReto?idreto="+arg+"&token="+localStorage.getItem('tk'), function(data, status){
+
+               $("#grid_array").pqGrid("refreshDataAndView");
+
+         }); 
+    }
+   
 }
 
  function Grid(){
-debugger;
+
     $.when( $.get("http://localhost:8080/api/partidos?token="+localStorage.getItem('tk'), function(data, status){
           
                   jQuery.data( document, "partidos",data );
@@ -122,7 +150,7 @@ debugger;
             { title: "Creacion", dataType: "date", dataIndx: "registro", minWidth: 150, resizable: false },
             { title: "Local", dataType: "string", dataIndx: "ulocal", width: '150' },
             { title: "Visitante", dataType: "string", dataIndx: "uvisitante", width: '150' },
-            { title: "Estatus", dataType: "string", dataIndx: "estatus", width: '100' },
+            { title: "Estatus", dataType: "string", dataIndx: "estatus", width: '100', pq_rowcls:'red',  pq_cellcls: { "estatus": "green"} },
             { title: "Retador", dataType: "string", dataIndx: "Retador", width: '150' },
             { title: "Accion", dataType: "string", dataIndx: "Retador", width: '100' }
           
@@ -138,10 +166,46 @@ debugger;
             var valor =  rowData['idbitgames'];
                     
                     //rowData.pq_cellcls[dataIndx] = 'pink';
-                   return "<a   onclick='Reto("+valor+")' href='#'>Aceptar eto</a>     " ;
+                   return "<button  class='btn btn-danger'  onclick='Reto("+valor+")'> - Cancelar Reto - </button>     " ;
           
             }, width: 100
         });
+
+
+
+        $.extend(colM[3], {            
+            render: function (ui) {
+                var rowData = ui.rowData,
+                    dataIndx = ui.dataIndx;
+debugger;
+              //  rowData.pq_cellcls = rowData.pq_cellcls || {};
+              var cls;
+           switch (ui.rowData.estatus) {
+                case 'En espera':
+                    cls = "alert bg-primary";
+                    break;
+                case 'Activo(Aceptado)':
+                    cls = "alert-succes";
+                    break;
+                case 'Finalizado':
+                    cls = "alert-info";
+                    break;
+                case 'Rechazado':
+                    cls = "alert-warning";
+                    break;
+                case 'Cancelado':
+                    cls = "alert-danger";
+                    break;
+                default:
+                    cls = "";
+            }
+                  var  valor = '<div class="alert '+cls+'">'+ui.rowData.estatus+'</div>'
+                    //rowData.pq_cellcls[dataIndx] = 'valopink';
+                   return valor ;
+          
+            }, width: 100
+        });
+
 
        
 
@@ -205,14 +269,6 @@ debugger;
 });
 
  }
-
-$(function(){
-
-
-         
-                         
- 
-});  
 
 
 
@@ -368,7 +424,7 @@ $(document).ready(function() {
          $("#Notificacion").hide();
           $("#Correcto").hide();
          $("#registro").click(function(){
-        
+  debugger;      
           var contrincante = $("#combobox").val();
 
 var esvalido  = false;
@@ -475,7 +531,7 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
        })).then(function( data, textStatus, jqXHR ) {
            $('#local').val(jQuery.data( document, "usuario")[0].usuario);
            Grid();
-           
+            //$("#combobox").val('');
         });  
 
         $.when( $.get("http://localhost:8080/api/usuarios?token="+localStorage.getItem('tk'), function(data, status){

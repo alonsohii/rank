@@ -98,6 +98,9 @@ apiRoutes.get('/check', function(req, res) {
 apiRoutes.get('/usuarios', UsuariosCtrl.getUsers);
 apiRoutes.get('/getuser', UsuariosCtrl.UserData);
 apiRoutes.get('/partidos', MatchCtrl.Partidos);
+apiRoutes.get('/CancelarReto', MatchCtrl.CancelarReto);
+
+
 //apiRoutes.use(express.static(__dirname + '/public'));
 // Post
 

@@ -2,7 +2,8 @@ drop procedure USP_GetMatch;
 DELIMITER //
 CREATE PROCEDURE USP_GetMatch
 (IN idjugador int, 
-IN accion int )
+IN accion int,
+IN reto int )
 BEGIN
   DECLARE email VARCHAR(100);
   DECLARE conteo VARCHAR(100);
@@ -16,7 +17,8 @@ SELECT idbitgames , DATE_FORMAT(registro,'%b %d %Y %h:%i %p') as registro , uloc
 
 when accion = 3 then
 SELECT * FROM rank.v_retosbitgame where (v_retosbitgame.idlocal = 5 or v_retosbitgame.idvisitante = 5 )and Diferencia <6;
-
+when accion = 4 then
+UPDATE `bitgames` SET `estatus` = '4' WHERE `bitgames`.`idbitgames` = reto;
 -- else set conteo =3;
 
 end case; 

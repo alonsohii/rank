@@ -12,7 +12,7 @@ when accion = 1 then
 SELECT * FROM rank.v_retosbitgame;
 
 when accion = 2 then
-SELECT * FROM rank.v_retosbitgame where v_retosbitgame.idlocal = idjugador or v_retosbitgame.idvisitante = idjugador;
+SELECT idbitgames , DATE_FORMAT(registro,'%b %d %Y %h:%i %p') as registro , ulocal , golocal, uvisitante, golvisitane , estatus , Diferencia , Torneo , Klan , Retador , Inserto , idinserta , idlocal , idvisitante FROM rank.v_retosbitgame where v_retosbitgame.idlocal = idjugador or v_retosbitgame.idvisitante = idjugador;
 
 when accion = 3 then
 SELECT * FROM rank.v_retosbitgame where (v_retosbitgame.idlocal = 5 or v_retosbitgame.idvisitante = 5 )and Diferencia <6;
@@ -22,5 +22,3 @@ SELECT * FROM rank.v_retosbitgame where (v_retosbitgame.idlocal = 5 or v_retosbi
 end case; 
 END //
 DELIMITER ;
-
-

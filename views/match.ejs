@@ -66,6 +66,20 @@ input.filterValue{
   </style>
    <script type="text/javascript" src=" ../js/adicional.js"></script>
  <script>
+function formatDate(date) {
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+  var strTime = hours + ':' + minutes + ' ' + ampm;
+  return date.getMonth()+1 + "/" + date.getDate() + "/" + date.getFullYear() + "  " + strTime;
+}
+
+function Reto(arg){
+  alert(arg);
+}
 
  function Grid(){
 debugger;
@@ -104,48 +118,88 @@ debugger;
         };
 
         obj.columnTemplate = { minWidth: '10%', maxWidth: '80%' };
-        obj.colModel = [
-            { title: "Creacion", dataType: "datetime", dataIndx: "registro", minWidth: 80, resizable: false },
-            { title: "Local", dataType: "string", dataIndx: "ulocal", width: '38' },
-            { title: "Visitante", dataType: "string", dataIndx: "uvisitante", width: '38' },
-            { title: "Estatus", dataType: "string", dataIndx: "estatus", width: '38' },
-            { title: "Retador", dataType: "string", dataIndx: "Retador", width: '38' },
-            { title: "Retador", dataType: "string", dataIndx: "Retador", width: '38' }
+       var colM = [
+            { title: "Creacion", dataType: "date", dataIndx: "registro", minWidth: 150, resizable: false },
+            { title: "Local", dataType: "string", dataIndx: "ulocal", width: '150' },
+            { title: "Visitante", dataType: "string", dataIndx: "uvisitante", width: '150' },
+            { title: "Estatus", dataType: "string", dataIndx: "estatus", width: '100' },
+            { title: "Retador", dataType: "string", dataIndx: "Retador", width: '150' },
+            { title: "Accion", dataType: "string", dataIndx: "Retador", width: '100' }
           
         ];
 
 
-        $.extend(obj.colModel[5], {            
+        $.extend(colM[5], {            
             render: function (ui) {
                 var rowData = ui.rowData,
                     dataIndx = ui.dataIndx;
 
               //  rowData.pq_cellcls = rowData.pq_cellcls || {};
-          
-              
+            var valor =  rowData['idbitgames'];
+                    
                     //rowData.pq_cellcls[dataIndx] = 'pink';
-                   return "<a   onclick='' href='reto'>link text</a>     " + rowData['ulocal'];
+                   return "<a   onclick='Reto("+valor+")' href='#'>Aceptar eto</a>     " ;
           
             }, width: 100
         });
 
+       
 
-        obj.dataModel = {
-            data: data,
-            location: "local",
-            sorting: "local",
-            sortIndx: "registro",
-            sortDir: "down",
-                        dataType: "JSON",
+
+        var dataModel = {
+            location: "remote",
+            sorting: "remote",
+            dataType: "JSON",
             method: "GET",
+            sortIndx: ["registro"],
+            sortDir: ["up", "down"],
             url: "http://localhost:8080/api/partidos?token="+localStorage.getItem('tk'),
-            //url: "/invoice.php", //for PHP
+
+            //url: "orders.php", //for PHP
             getData: function (dataJSON) {
-                return { data: dataJSON.data };
+                return { curPage: data.curPage, totalRecords:data.totalRecords, data: dataJSON.data };
             }
+        }
+
+        var gObj = {
+
+            dataModel: dataModel,
+   
+            colModel: colM,               
+           
+            virtualX:true, virtualY:true,
+            freezeCols: 5,
+              width: 900,
+            height: 400,
+            collapsible: true,
+            pageModel: { type: "local", rPP: 20, strRpp: "{0}", strDisplay: "{0} to {1} of {2}" },
+            selectionModel: { swipe: true },
+            wrap: false, hwrap: false,
+
+            //freezeCols: 2,            
+           // numberCell: { show: false, resizable: true, title: "#" },
+            title: "Partidos",
+            resizable: true,
+            editable: false,
+             scrollModel: { autoFit: true },
         };
          
-        $("#grid_array").pqGrid( obj );  
+
+
+
+
+        var $grid = $("div#grid_array").pqGrid(gObj);
+
+        //bind the select list.
+        $("#grid_array").change(function (evt) {
+          
+            var DM = $grid.pqGrid("option", "dataModel");
+
+            $grid.pqGrid("option", "dataModel", DM);
+            $grid.pqGrid("refreshDataAndView");
+        });
+         
+     //   $("#grid_array").pqGrid( obj );  
                                                  //    $("#grid_array").pqGrid("refreshDataAndView");
 //$("#grid_array").pqGrid("refresh");     
 });
@@ -338,7 +392,7 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
                                   .done(function( data ) {
                                     debugger;
                                     // $("#grid_array").html(null);  
- Grid();
+
                                    if(data.sobrepasa){
                                      Error('El limite es de 5 retos al dia con el mismo jugador , este se ha terminado.');
                                    }else{ 
@@ -349,9 +403,11 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
                                             if(!data.success){
                                                  Error('Este correo ya se encuentra registrado.');
                                             }else{
+                                                  $("#grid_array").pqGrid("refreshDataAndView");
                                                   $("#Correcto").hide(50);
                                                   $("#Correcto").html('Bien! Reto hecho  a '+camposjson.visitante+' correctamente te quedan '+data.conteo[0].COUNTEOS+' retos por hacer al mismo jugador');
                                                   $("#Correcto").show(350);
+
                                                   
                                             }
                                         }
@@ -381,6 +437,9 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
 </head>
 <body>
 <%- include('header'); %>
+
+
+
 <div class="container containerBorder">
   <div class="row">
 <div class="col-xs-12" id="demoContainer">
@@ -492,15 +551,17 @@ var idpais;
 
 
 
-<div id="grid_array"></div>
-
-    <div id="grid_search" style="margin: auto;">
-</div>
 
 
 </div>
     </div>
   </div>
+
+
+<div id="grid_array" class="container containerBorder"></div>
+
+    <div id="grid_search" style="margin: auto;">
+</div>
 
 
 

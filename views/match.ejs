@@ -1,21 +1,19 @@
 <html>
 <head>
   <title> <%= title %></title>
-  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+
 
 
 
    <link rel="stylesheet"
      href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>    
- <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+ <!--  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>     -->
+
  
- <!--Include Touch Punch file to provide support for touch devices-->
- <script type="text/javascript" src="path to touch-punch.js" ></script>   
- 
- <!--ParamQuery Grid files    https://paramquery.com/tutorial  -->
- <link rel="stylesheet" href="path to pqgrid.min.css" />
- <script type="text/javascript" src="path to pqgrid.min.js" ></script>  
+
 
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/0.10.0/lodash.min.js"></script>
@@ -23,12 +21,27 @@
   <script type="text/javascript" src=" https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.0/jquery.validate.min.js"></script>
 
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
-  <link rel="stylesheet" href="../table/jquery.bootgrid.min.css">
-  <script src="../table/jquery.bootgrid.min.js"></script>
+
+
+      <!--pqSelect-->
+    <link rel="Stylesheet" href="../grid/pqselect.min.css" />   
+    <script src="../grid/pqselect.min.js"></script>
+     
+    <!--link rel="stylesheet" href="/Content/css/pqgrid.min.css" /-->    
+    <link rel="stylesheet" href="../grid/pqgrid.min.css" />    
+
+    <script src="../grid/touch-punch.js"></script>
+
+    <!--script src="/Content/js/pqgrid.min.js"></script-->    
+    <script src="../grid/pqgrid.min.js"></script>    
+
 
 <style>
+input.filterValue{    
+    border:1px solid #aaa;padding:1px 5px;
+    margin:0px 5px;
+}
   .custoComb {
    background-color: #cccccc;
       background: #cccccc;
@@ -54,12 +67,101 @@
    <script type="text/javascript" src=" ../js/adicional.js"></script>
  <script>
 
- $("#grid-data-api").bootgrid({
-    ajaxSettings: {
-        method: "GET",
-        cache: false
-    }
+ function Grid(){
+debugger;
+    $.when( $.get("http://localhost:8080/api/partidos?token="+localStorage.getItem('tk'), function(data, status){
+          
+                  jQuery.data( document, "partidos",data );
+
+       })).then(function( x ) {
+
+          var data = jQuery.data( document, "partidos" );
+      
+             var obj = {
+
+            //columnBorders: false,
+    
+           //  showBottom: false
+            //, maxColWidth: '50%'
+             scrollModel: { autoFit: true },
+            width: '100%',
+            height: 400,
+            collapsible: false,
+            pageModel: { type: "local", rPP: 20, strRpp: "{0}", strDisplay: "{0} to {1} of {2}" },
+            selectionModel: { swipe: true },
+
+            wrap: false, hwrap: false,
+            //freezeCols: 2,            
+            numberCell: { show: false, resizable: true, title: "#" },
+            title: "Partidos",
+            resizable: true,
+            editable: false
+
+
+
+
+            //, flexHeight: true
+        };
+
+        obj.columnTemplate = { minWidth: '10%', maxWidth: '80%' };
+        obj.colModel = [
+            { title: "Creacion", dataType: "datetime", dataIndx: "registro", minWidth: 80, resizable: false },
+            { title: "Local", dataType: "string", dataIndx: "ulocal", width: '38' },
+            { title: "Visitante", dataType: "string", dataIndx: "uvisitante", width: '38' },
+            { title: "Estatus", dataType: "string", dataIndx: "estatus", width: '38' },
+            { title: "Retador", dataType: "string", dataIndx: "Retador", width: '38' },
+            { title: "Retador", dataType: "string", dataIndx: "Retador", width: '38' }
+          
+        ];
+
+
+        $.extend(obj.colModel[5], {            
+            render: function (ui) {
+                var rowData = ui.rowData,
+                    dataIndx = ui.dataIndx;
+
+              //  rowData.pq_cellcls = rowData.pq_cellcls || {};
+          
+              
+                    //rowData.pq_cellcls[dataIndx] = 'pink';
+                   return "<a   onclick='' href='reto'>link text</a>     " + rowData['ulocal'];
+          
+            }, width: 100
+        });
+
+
+        obj.dataModel = {
+            data: data,
+            location: "local",
+            sorting: "local",
+            sortIndx: "registro",
+            sortDir: "down",
+                        dataType: "JSON",
+            method: "GET",
+            url: "http://localhost:8080/api/partidos?token="+localStorage.getItem('tk'),
+            //url: "/invoice.php", //for PHP
+            getData: function (dataJSON) {
+                return { data: dataJSON.data };
+            }
+        };
+         
+        $("#grid_array").pqGrid( obj );  
+                                                 //    $("#grid_array").pqGrid("refreshDataAndView");
+//$("#grid_array").pqGrid("refresh");     
 });
+
+ }
+
+$(function(){
+
+
+         
+                         
+ 
+});  
+
+
+
   $( function() {
     $.widget( "custom.combobox", {
       _create: function() {
@@ -228,13 +330,15 @@ var camposjson = CamposJson('#combobox');
 camposjson.retador = jQuery.data( document, "usuario")[0].id.toString();
 camposjson.retadorStr =  jQuery.data( document, "usuario")[0].usuario
 camposjson.visitante = $( "#combobox option:selected" ).text();
-debugger;
+
     if(camposjson.retadorStr != camposjson.visitante){
 
                              $("#Notificacion").hide(350);
                                  $.post( "http://localhost:8080/api/reto?token="+localStorage.getItem('tk'), camposjson )
                                   .done(function( data ) {
-                         
+                                    debugger;
+                                    // $("#grid_array").html(null);  
+ Grid();
                                    if(data.sobrepasa){
                                      Error('El limite es de 5 retos al dia con el mismo jugador , este se ha terminado.');
                                    }else{ 
@@ -311,6 +415,7 @@ debugger;
 
        })).then(function( data, textStatus, jqXHR ) {
            $('#local').val(jQuery.data( document, "usuario")[0].usuario);
+           Grid();
            
         });  
 
@@ -387,14 +492,10 @@ var idpais;
 
 
 
-<table id="grid-data-api" class="table table-condensed table-hover table-striped" data-toggle="bootgrid" data-ajax="true" data-url="http://localhost:8080/api/partidos?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NSwiY29ycmVvIjoiYWxvbnNvQGhvdG1haWwuY29tIiwicGF3IjpudWxsLCJpYXQiOjE0OTQ5MjAxMjQsImV4cCI6MTQ5NDkyNTEyNH0.gerp91zT9dbj91mRRfLoN8AZtsVRwbUbpiQJX8d1G_o">
-    <thead>
-        <tr>
-            <th data-column-id="idbitgames" data-type="number" data-identifier="true">ID</th>
-         
-        </tr>
-    </thead>
-</table>
+<div id="grid_array"></div>
+
+    <div id="grid_search" style="margin: auto;">
+</div>
 
 
 </div>

@@ -87,10 +87,10 @@ exports.Partidos = function(req,res){
             if(!err){
                  var obj  = new Object();
                  res.setHeader('Content-Type', 'application/json');
-                 obj.current = 1;
-                 obj.rowCount = 10;
-                 obj.rows = rows[0];
-                 obj.total = rows[0].length;
+                // obj.current = 1;
+              //   obj.rowCount = 10;
+                 obj = rows[0];
+                // obj.total = rows[0].length;
                  res.json(obj);
 
             }else {

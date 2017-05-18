@@ -18,6 +18,9 @@
       <li>
         <a   id='link' href="">Match</a>
       </li>
+            <li>
+        <a   id='retos' href="">Bandeja</a>
+      </li>
 
       
     </ul>
@@ -25,5 +28,11 @@
 </nav>
  <script> 
   $( document ).ready(function() {
-    $('#link').attr("href", "api/match?token="+localStorage.getItem('tk'));
+
+
+  var evalua = (window.location.href.indexOf('api') ==  '' ?0:'../' );
+
+
+    $('#link').attr("href", evalua+"api/match?token="+localStorage.getItem('tk'));
+    $('#retos').attr("href", evalua+"api/misretos?token="+localStorage.getItem('tk'));
 });    </script> 

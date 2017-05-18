@@ -105,9 +105,33 @@ exports.Partidos = function(req,res){
 exports.CancelarReto = function(req,res){
 
   var datos = req.query;
+        
+
+        db.query('CALL USP_GetMatch(?,?,?)',[req.decoded.id, 4,req.query.idreto],function(err,rows){
+            if(!err){
+                 var obj  = new Object();
+                 res.setHeader('Content-Type', 'application/json');
+               //   obj.curPage = 1;
+              //   obj.rowCount = 10;
+                // obj.data = rows[0];
+                console.log(rows);
+                 obj.success = 1;
+                 res.json(obj);
+
+            }else {
+             res.status(400);  res.send(err);  throw err;
+            }
+        });
 
 
-        db.query('CALL USP_GetMatch(?,?,?)',[db.escape(req.decoded.id), 4,req.query.idreto],function(err,rows){
+},
+
+exports.ModificarReto = function(req,res){
+
+  var datos = req.query;
+        
+
+        db.query('CALL USP_EditMatch(?,?,?,?,?)',[req.decoded.id, 5,req.query.idreto,1,2],function(err,rows){
             if(!err){
                  var obj  = new Object();
                  res.setHeader('Content-Type', 'application/json');

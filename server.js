@@ -113,7 +113,8 @@ app.use('/api', apiRoutes);
 // Paginas token
 //============================================
 
-Helper.PgApi('/match','match',{ title: "Inicio"},app);
+Helper.PgApi('/match','match',{ title: "Hacer reto"},app);
+Helper.PgApi('/misretos','misretos',{ title: "Mis retos"},app);
 
 
 

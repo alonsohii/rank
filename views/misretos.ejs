@@ -1,93 +1,43 @@
 <html>
 <head>
   <title> <%= title %></title>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />    
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 
 
 
 
-   <link rel="stylesheet"
-     href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
+
  <!--  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>     -->
 
- 
 
 
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/0.10.0/lodash.min.js"></script>
+
   <script type="text/javascript" src="http://alasql.org/codex/lib/alasql/alasql.min.js"></script>
+
   <script type="text/javascript" src=" https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.0/jquery.validate.min.js"></script>
 
 
+
   <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">
+
   <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">
+
   <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/color.css">
+
   <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/demo/demo.css">
+
   <script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
 
 
 
-
-<style>
-
-div.pq-grid *
-{
-    font-size:12px;    
-}
-button.delete_btn
-{
-    margin:-2px 0px;
-}
-button.edit_btn
-{
-    margin:-3px 0px;
-    height: 40;
-}
-tr.pq-grid-row td
-{
-    color:#888;
-}
-tr.pq-row-edit > td
-{
-    color:#000;
-}
-tr.pq-row-delete
-{
-    text-decoration:line-through;         
-}
-tr.pq-row-delete td
-{
-    background-color:pink;   
-}
-
-input.filterValue{    
-    border:1px solid #aaa;padding:1px 5px;
-    margin:0px 5px;
-}
-  .custoComb {
-   background-color: #cccccc;
-      background: #cccccc;
-      color: #fff;
-      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
-  }
-  .custom-combobox {
-    position: relative;
-    display: inline-block;
-  }
-  .custom-combobox-toggle {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    margin-left: -1px;
-    padding: 0;
-  }
-  .custom-combobox-input {
-    margin: 0;
-    padding: 5px 10px;
-  }
-  </style>
    <script type="text/javascript" src=" ../js/adicional.js"></script>
  <script>
 
@@ -98,157 +48,14 @@ function Reto(arg){
 
        $.get("http://localhost:8080/api/CancelarReto?idreto="+arg+"&token="+localStorage.getItem('tk'), function(data, status){
 
-               $("#grid_array").pqGrid("refreshDataAndView");
+               //$("#grid_array").pqGrid("refreshDataAndView");
 
          }); 
     }
    
 }
 
- function Grid(){
 
-  
-
- }
-
-
-
-  $( function() {
-    $.widget( "custom.combobox", {
-      _create: function() {
-        this.wrapper = $( "<span>" )
-          .addClass( "custom-combobox" )
-          .insertAfter( this.element );
- 
-        this.element.hide();
-        this._createAutocomplete();
-        this._createShowAllButton();
-      },
- 
-      _createAutocomplete: function() {
-        var selected = this.element.children( ":selected" ),
-          value = selected.val() ? selected.text() : "";
- 
-        this.input = $( "<input>" )
-          .appendTo( this.wrapper )
-          .val( value )
-          .attr( "title", "" )
-          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
-          .autocomplete({
-            delay: 0,
-            minLength: 0,
-            source: $.proxy( this, "_source" )
-          })
-          .tooltip({
-            classes: {
-              "ui-tooltip": "ui-state-highlight"
-            }
-          });
- 
-        this._on( this.input, {
-          autocompleteselect: function( event, ui ) {
-            ui.item.option.selected = true;
-            this._trigger( "select", event, {
-              item: ui.item.option
-            });
-          },
- 
-          autocompletechange: "_removeIfInvalid"
-        });
-      },
- 
-      _createShowAllButton: function() {
-        var input = this.input,
-          wasOpen = false;
- 
-        $( "<a>" )
-          .attr( "tabIndex", -1 )
-          .attr( "title", "Show All Items" )
-          .tooltip()
-          .appendTo( this.wrapper )
-          .button({
-            icons: {
-              primary: "ui-icon-triangle-1-s"
-            },
-            text: false
-          })
-          .removeClass( "ui-corner-all" )
-          .addClass( "custom-combobox-toggle ui-corner-right" )
-          .on( "mousedown", function() {
-            wasOpen = input.autocomplete( "widget" ).is( ":visible" );
-          })
-          .on( "click", function() {
-            input.trigger( "focus" );
- 
-            // Close if already visible
-            if ( wasOpen ) {
-              return;
-            }
- 
-            // Pass empty string as value to search for, displaying all results
-            input.autocomplete( "search", "" );
-          });
-      },
- 
-      _source: function( request, response ) {
-        var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
-        response( this.element.children( "option" ).map(function() {
-          var text = $( this ).text();
-          if ( this.value && ( !request.term || matcher.test(text) ) )
-            return {
-              label: text,
-              value: text,
-              option: this
-            };
-        }) );
-      },
- 
-      _removeIfInvalid: function( event, ui ) {
- 
-        // Selected an item, nothing to do
-        if ( ui.item ) {
-          return;
-        }
- 
-        // Search for a match (case-insensitive)
-        var value = this.input.val(),
-          valueLowerCase = value.toLowerCase(),
-          valid = false;
-        this.element.children( "option" ).each(function() {
-          if ( $( this ).text().toLowerCase() === valueLowerCase ) {
-            this.selected = valid = true;
-            return false;
-          }
-        });
- 
-        // Found a match, nothing to do
-        if ( valid ) {
-          return;
-        }
- 
-        // Remove invalid value
-        this.input
-          .val( "" )
-          .attr( "title", value + " didn't match any item" )
-          .tooltip( "open" );
-        this.element.val( "" );
-        this._delay(function() {
-          this.input.tooltip( "close" ).attr( "title", "" );
-        }, 2500 );
-        this.input.autocomplete( "instance" ).term = "";
-      },
- 
-      _destroy: function() {
-        this.wrapper.remove();
-        this.element.show();
-      }
-    });
- 
-    $( "#combobox" ).combobox();
-    $( "#toggle" ).on( "click", function() {
-      $( "#combobox" ).toggle();
-    });
-  } );
   </script>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
@@ -287,9 +94,7 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
                              $("#Notificacion").hide(350);
                                  $.post( "http://localhost:8080/api/reto?token="+localStorage.getItem('tk'), camposjson )
                                   .done(function( data ) {
-                                    debugger;
-                                    // $("#grid_array").html(null);  
-
+    
                                    if(data.sobrepasa){
                                      Error('El limite es de 5 retos al dia con el mismo jugador , este se ha terminado.');
                                    }else{ 
@@ -300,7 +105,7 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
                                             if(!data.success){
                                                  Error('Este correo ya se encuentra registrado.');
                                             }else{
-                                                  $("#grid_array").pqGrid("refreshDataAndView");
+                                                  $('#dg').datagrid('reload'); 
                                                   $("#Correcto").hide(50);
                                                   $("#Correcto").html('Bien! Reto hecho  a '+camposjson.visitante+' correctamente te quedan '+data.conteo[0].COUNTEOS+' retos por hacer al mismo jugador');
                                                   $("#Correcto").show(350);
@@ -337,134 +142,42 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
 
 
 
-<div class="container containerBorder">
-  <div class="row">
-<div class="col-xs-12" id="demoContainer">
+
+
   <div class="alert alert-success" id="Correcto">
     <strong>Bien!</strong> Registro Hecho exitosamente.
   </div>
 <div class="alert alert-danger" id="Notificacion" >
   <strong>Error!</strong><p id="textnot" ></p>
 </div>
-    <div id="registrationForm2" class="form-horizontal fv-form fv-form-bootstrap" novalidate="novalidate"  target="none" action="">
-                 <!--  <button type="submit" class="fv-hidden-submit" style="display: none; width: 0px; height: 0px;"></button> -->
-    <div class="form-group">
-        <label class="col-xs-3 control-label">Partida</label>
+    
+
+
+
+
+
+
+
+  <div id="p" class="easyui-panel" title="Realiza una reta" style="width:100%;height:200px;padding:10px;">
+       
+
+ <div class="form-group">
+        <label class="col-xs-3 "></label>
         <div class="col-xs-4">
-            <input type="text" class="form-control custoComb" name="local" id="local" placeholder="Contrincante" value='' disabled="" />
-        </div>
-        <div class="col-xs-4">
-            <select class="form-control" name="visitante" id="combobox">
-               
-            </select>
+ 
+                  <input class="easyui-textbox" name="local" id="local"  value="..." disabled="" style="width:100%" data-options="label:'Partida:',required:true">
+            
+            <input id="combobox" style="width:350px"></input>
         </div>
 
     </div>
 
-
-    <script>
-
-    $(function() {
-      $.when($.get("http://localhost:8080/api/getuser?token="+localStorage.getItem('tk'), function(data, status){
-          
-            jQuery.data( document, "usuario",data );
-
-       })).then(function( data, textStatus, jqXHR ) {
-           $('#local').val(jQuery.data( document, "usuario")[0].usuario);
-           Grid();
-            //$("#combobox").val('');
-        });  
-
-        $.when( $.get("http://localhost:8080/api/usuarios?token="+localStorage.getItem('tk'), function(data, status){
-          
-            jQuery.data( document, "paises",data );
-
-          })).then(function( data, textStatus, jqXHR ) {
-            ComboUsuarios();
-        });      
-    });
-
-    function Where(data,value){
-     return  _.filter(data, function(item, index) {
-         return _.contains([value], item.iso);
-    });
-
-    }
-var adress;
-var idpais;
-
-    function ComboUsuarios(){
-
-
-
-        $.when($.getJSON('http://api.wipmania.com/jsonp?callback=?', function (data) {
-                adress =  data.address.country;
-            })).then(function( data, textStatus, jqXHR ) {
-           $.each(   jQuery.data( document, "paises"), function( i, l ){
-
-            $( "#combobox" ).append( " <option value='"+l.id+"'>" + l.nombre +"</option>" );
-           if(adress == l.Pais ){
-               idpais = l.Id;
-            }
-          });
-
-        $("#combobox").val(idpais);
-
-        });
-
-    }
-
-    function GroupBy(data){
-
-      return  _
-        .chain(data)
-        .groupBy('Nombre')
-        .sort('Nombre')
-        .map(function(value, key) {
-            return {
-                Pais: key,
-                Id: value[0].id,
-                Iso: value[0].iso
-               // paises: _.pluck(value, 'Nombre')
-            }
-        })
-        .value();
-    }
-    </script>
-
-
-    </div>
-
-
-
-
-
-    <div class="form-group">
+        <div class="form-group">
         <div class="col-xs-9 col-xs-offset-3">
-            <button class="btn btn-primary" name="signup" value="Sign up" id='registro' >Retar ahora!</button>
+            <button class="easyui-linkbutton" data-options="iconCls:'icon-add',toggle:true" name="signup" value="Sign up" id='registro' >Retar ahora!</button>
         </div>
     </div>
-
-
-
-
-
-
-</div>
     </div>
-  </div>
-
-
-
-   <div id="grid_editing" class='container containerBorder' style="margin: auto;">
-</div>
-
-<script>
-
-
-
-</script>
-
 
 
 
@@ -475,7 +188,7 @@ var idpais;
 
 
   <div style="margin:20px 0 10px 0;"></div>
-    <div class="easyui-tabs" style="width:700px;height:250px">
+    <div class="easyui-tabs" style="width:100%;height:450px">
         <div title="About" style="padding:10px">
            
 
@@ -485,7 +198,7 @@ var idpais;
 
 
 
-<table id="dg" title="Pendientes" class="easyui-datagrid" style="width:700px;height:250px"
+<table id="dg" title="Pendientes" class="easyui-datagrid" style="width:95%;height:400px"
       url=""  
       toolbar="#toolbar" pagination="true"
       rownumbers="true" fitColumns="true" singleSelect="true">
@@ -530,19 +243,6 @@ var idpais;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
            
         </div>
         <div title="My Documents" style="padding:10px">
@@ -563,13 +263,10 @@ var idpais;
     var url;
 
     $( document ).ready(function() {
-
-
              $('#dg').datagrid({
                 url: 'http://localhost:8080/api/getpartidos?token='+localStorage.getItem('tk')
              
             });
-
     });
 
     function newUser(){
@@ -624,4 +321,49 @@ var idpais;
         });
       }
     }
+
+
+
+
+
+
+
+       $(function(){
+            $('#combobox').combogrid({
+                panelWidth:700,
+                url: "http://localhost:8080/api/usuarios?token="+localStorage.getItem('tk'),
+                idField:'id',
+                textField:'nombre',
+                mode:'remote',
+                fitColumns:true,
+                columns:[[
+                    {field:'nombre',title:'Nombre',width:60}
+                ]]
+            });
+            $("input[name='mode']").change(function(){
+                var mode = $(this).val();
+                $('#cg').combogrid({
+                    mode: 'remote'
+                });
+            });
+        });
+
+   
+    $(function() {
+
+      $.when($.get("http://localhost:8080/api/getuser?token="+localStorage.getItem('tk'), function(data, status){  
+
+            jQuery.data( document, "usuario",data );
+
+       })).then(function( data, textStatus, jqXHR ) {
+debugger;
+          // $('#local').val(jQuery.data( document, "usuario")[0].usuario);
+
+           $('#local').textbox({
+                value:jQuery.data( document, "usuario")[0].usuario
+            });
+
+        });  
+
+    });
   </script>

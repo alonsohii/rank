@@ -2,7 +2,7 @@ var express 	= require('express'),
     app         = express(),
     bodyParser  = require('body-parser'),
     morgan      = require('morgan'),
-    mongoose    = require('mongoose'),
+   // mongoose    = require('mongoose'),
     config = require('./config'), // get our config file
     path    = require("path"),
     AutCtrl = require('./app/controllers/aut'),
@@ -22,7 +22,7 @@ var express 	= require('express'),
 // configuration ===================================================
 // =================================================================
 var port = process.env.PORT || 8080; // used to create, sign, and verify tokens
-mongoose.connect(config.database); // connect to database
+//mongoose.connect(config.database); // connect to database
 app.set('superSecret', config.secret); // secret variable
 
 // use body parser so we can get info from POST and/or URL parameters
@@ -95,7 +95,7 @@ apiRoutes.get('/check', function(req, res) {
     res.json(req.decoded);
 });
 // Gets
-apiRoutes.get('/usuarios', UsuariosCtrl.getUsers);
+
 apiRoutes.get('/getuser', UsuariosCtrl.UserData);
 apiRoutes.get('/partidos', MatchCtrl.Partidos);
 apiRoutes.get('/CancelarReto', MatchCtrl.CancelarReto);
@@ -106,6 +106,7 @@ apiRoutes.get('/CancelarReto', MatchCtrl.CancelarReto);
 
 apiRoutes.post('/reto', MatchCtrl.AddMatch);
 apiRoutes.post('/getpartidos', MatchCtrl.Partidos);
+apiRoutes.post('/usuarios', UsuariosCtrl.getUsers);
 
 app.use('/api', apiRoutes);
 

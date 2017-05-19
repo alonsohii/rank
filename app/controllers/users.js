@@ -1,8 +1,8 @@
-var mongoose = require('mongoose'),
-    express   = require('express'),
+//var mongoose = require('mongoose'),
+var express   = require('express'),
     User   = require('../models/user'), // get our mongoose model
     db = require('../connection'),
-    app         = express(),
+    app   = express(),
     User   = require('../models/user'), // get our mongoose model
     Helper   = require('../helpers/general'); // get helper
     crypto = require('crypto'),

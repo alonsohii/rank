@@ -20,21 +20,14 @@
   <script type="text/javascript" src="http://alasql.org/codex/lib/alasql/alasql.min.js"></script>
   <script type="text/javascript" src=" https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.15.0/jquery.validate.min.js"></script>
 
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/default/easyui.css">
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/icon.css">
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/themes/color.css">
+  <link rel="stylesheet" type="text/css" href="http://www.jeasyui.com/easyui/demo/demo.css">
+  <script type="text/javascript" src="http://www.jeasyui.com/easyui/jquery.easyui.min.js"></script>
 
 
-
-      <!--pqSelect-->
-    <link rel="Stylesheet" href="../grid/pqselect.min.css" />   
-    <script src="../grid/pqselect.min.js"></script>
-     
-    <!--link rel="stylesheet" href="/Content/css/pqgrid.min.css" /-->    
-    <link rel="stylesheet" href="../grid/pqgrid.min.css" />    
-
-    <script src="../grid/touch-punch.js"></script>
-
-    <!--script src="/Content/js/pqgrid.min.js"></script-->    
-    <script src="../grid/pqgrid.min.js"></script>    
 
 
 <style>
@@ -115,275 +108,6 @@ function Reto(arg){
  function Grid(){
 
   
-    $(function () {
-        //define common ajax object for addition, update and delete.
-        var ajaxObj = {
-            dataType: "JSON",
-            beforeSend: function () {
-                this.pqGrid("showLoading");
-            },
-            complete: function () {
-                this.pqGrid("hideLoading");
-            },
-            error: function () {
-                this.pqGrid("rollback");
-            }
-        };
-
-        //to check whether any row is currently being edited.
-        function isEditing($grid) {
-            var rows = $grid.pqGrid("getRowsByClass", { cls: 'pq-row-edit' });
-            if (rows.length > 0) {
-                //focus on editor if any 
-                $grid.find(".pq-editor-focus").focus();
-                return true;
-            }
-            return false;
-        }
-        //called by add button in toolbar.
-        function addRow($grid) {
-            if (isEditing($grid)) {
-                return false;
-            }
-            //append empty row in the first row.                            
-            var rowData = { UnitPrice: 0, UnitsInStock: 0, UnitsOnOrder: 0, Discontinued: false, ProductName: "" }; //empty row template
-            $grid.pqGrid("addRow", { rowIndxPage: 0, rowData: rowData });
-
-            var $tr = $grid.pqGrid("getRow", { rowIndxPage: 0 });
-            if ($tr) {
-                //simulate click on edit button.
-                $tr.find("button.edit_btn").click();
-            }
-        }
-        //called by delete button.
-        function deleteRow(rowIndx, $grid) {
-            $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
-            var rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx });
-            var ans = window.confirm("Are you sure to delete row No " + (rowIndx + 1) + "?");
-
-            if (ans) {
-                $grid.pqGrid("deleteRow", { rowIndx: rowIndx, effect: true });
-
-                var ProductID = $grid.pqGrid("getRecId", { rowIndx: rowIndx });
-
-                $.ajax($.extend({}, ajaxObj, {
-                    context: $grid,
-                    url: "/pro/products/delete",
-                    //url: "/pro/products.php?pq_delete=1",//for PHP
-                    data: { ProductID: ProductID },
-                    success: function () {
-                        this.pqGrid("commit");
-                        this.pqGrid("refreshDataAndView");
-                    },
-                    error: function () {
-                        //debugger;
-                        this.pqGrid("removeClass", { rowData: rowData, cls: 'pq-row-delete' });
-                        this.pqGrid("rollback");
-                    }
-                }));
-            }
-            else {
-                $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-delete' });
-            }
-        }
-        //called by edit button.
-        function editRow(rowIndx, $grid) {
-
-            $grid.pqGrid("addClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
-            $grid.pqGrid("editFirstCellInRow", { rowIndx: rowIndx });
-
-            //change edit button to update button and delete to cancel.
-            var $tr = $grid.pqGrid("getRow", { rowIndx: rowIndx }),
-                $btn = $tr.find("button.edit_btn");
-            $btn.button("option", { label: "Confirmar Resultado", "icons": { primary: "ui-icon-check"} })
-                .unbind("click")
-                .click(function (evt) {
-                    evt.preventDefault();
-                    return update(rowIndx, $grid);
-                });
-            $btn.next().button("option", { label: "Cancel", "icons": { primary: "ui-icon-cancel"} })
-                .unbind("click")
-                .click(function (evt) {
-                    $grid.pqGrid("quitEditMode");
-                    $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
-                    $grid.pqGrid("refreshRow", { rowIndx: rowIndx });
-                    $grid.pqGrid("rollback");
-                });
-        }
-        //called by update button.
-        function update(rowIndx, $grid) {
-
-            if ($grid.pqGrid("saveEditCell") == false) {
-                return false;
-            }
-
-            var isValid = $grid.pqGrid("isValid", { rowIndx: rowIndx }).valid;
-            if (!isValid) {
-                return false;
-            }
-            var isDirty = $grid.pqGrid("isDirty");
-            if (isDirty) {
-                var url,
-                    rowData = $grid.pqGrid("getRowData", { rowIndx: rowIndx }),
-                    recIndx = $grid.pqGrid("option", "dataModel.recIndx");
-
-                $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
-
-                if (rowData[recIndx] == null) {
-                    //url to add records.
-                    url = "/pro/products/add";
-                    //url = "/pro/products.php?pq_add=1";for PHP
-                }
-                else {
-                    //url to  update records.
-                    url = "/pro/products/update";
-                    //url = "/pro/products.php?pq_update=1";for PHP
-                }
-                $.ajax($.extend({}, ajaxObj, {
-                    context: $grid,
-                    url: url,
-                    data: rowData,
-                    success: function (response) {
-                        var recIndx = this.pqGrid("option", "dataModel.recIndx");
-                        if (rowData[recIndx] == null) {
-                            rowData[recIndx] = response.recId;
-                        }
-                        this.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
-                        this.pqGrid("commit");
-                    }
-                }));
-            }
-            else {
-                $grid.pqGrid("quitEditMode");
-                $grid.pqGrid("removeClass", { rowIndx: rowIndx, cls: 'pq-row-edit' });
-                $grid.pqGrid("refreshRow", { rowIndx: rowIndx });
-            }
-        }
-        //define the grid.
-        var obj = { 
-            width:1200,                       
-            wrap: false,
-            hwrap: false,
-            resizable: true,
-            columnBorders: false,
-            sortable: false,
-            numberCell: { show: false },
-            track: true, //to turn on the track changes.
-            flexHeight: true,
-           /* toolbar: {
-                items: [
-                    { type: 'button', icon: 'ui-icon-plus', label: 'Add Product', listeners: [
-                        { "click": function (evt, ui) {
-                            var $grid = $(this).closest('.pq-grid');
-                            addRow($grid);
-                            //debugger;
-                        }
-                        }
-                    ]
-                    }
-                ]
-            },*/
-            scrollModel: {
-                autoFit: true
-            },
-            selectionModel: {
-                //type: 'cell'
-                type: 'none'
-            },
-            hoverMode: 'cell',
-            editModel: {
-                //onBlur: 'validate',
-                saveKey: $.ui.keyCode.ENTER
-            },
-            editor: { type: 'textbox', select: true, style: 'outline:none;' },
-            validation: {
-                icon: 'ui-icon-info'
-            },
-            title: "<b>Inline Editing</b>",
-
-            colModel: [
-                    { title: "Fecha reto", dataType: "date", dataIndx: "registro", editable: false, width: 80 },
-                    { title: "Local", width: 165, dataType: "string", dataIndx: "ulocal", editable: true
-                      /*  validations: [
-                            { type: 'minLen', value: 1, msg: "Required" },
-                            { type: 'maxLen', value: 40, msg: "length should be <= 40" }
-                        ]*/
-                    },
-          
-                    { title: "", editable: false, minWidth: 95, sortable: false, render: function (ui) {
-                        return "<button type='button' class='edit_btn btn btn-info' id= 'bt'>- Actualizar Resultado - </button>";
-                    }
-                    }
-            ],
-            dataModel: {
-                dataType: "JSON",
-                location: "remote",
-                recIndx: "registro",
-                url: "http://localhost:8080/api/partidos?token="+localStorage.getItem('tk'),
-                //url: "/pro/products.php",//for PHP
-                getData: function (response) {
-                    return { data: response.data,  totalRecords: response.totalRecords };
-                }
-            },
-            pageModel: { type: "remote" },
-            cellBeforeSave: function (evt, ui) {
-                var $grid = $(this);
-                var isValid = $grid.pqGrid("isValid", ui);
-                if (!isValid.valid) {
-                    return false;
-                }
-            },
-            //make rows editable selectively.
-            editable: function (ui) {
-                var $grid = $(this);
-                var rowIndx = ui.rowIndx;
-                if ($grid.pqGrid("hasClass", { rowIndx: rowIndx, cls: 'pq-row-edit' }) == true) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            }
-        };
-        var $grid = $("#grid_editing").pqGrid(obj);
-        //use refresh & refreshRow events to display jQueryUI buttons and bind events.
-        $grid.on('pqgridrefresh pqgridrefreshrow', function () {
-            //debugger;
-            var $grid = $(this);
-
-            //delete button
-            $grid.find("button.delete_btn").button({ icons: { primary: 'ui-icon-close'} })
-            .unbind("click")
-            .bind("click", function (evt) {
-                if (isEditing($grid)) {
-                    return false;
-                }
-                var $tr = $(this).closest("tr"),
-                    rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx;
-                deleteRow(rowIndx, $grid);
-            });
-            //edit button
-            $grid.find("button.edit_btn").button({ icons: { primary: 'ui-icon-pencil'} })
-            .unbind("click")
-            .bind("click", function (evt) {
-                if (isEditing($grid)) {
-                    return false;
-                }
-                var $tr = $(this).closest("tr"),
-                    rowIndx = $grid.pqGrid("getRowIndx", { $tr: $tr }).rowIndx;
-                editRow(rowIndx, $grid);
-                return false;
-            });
-
-            //rows which were in edit mode before refresh, put them in edit mode again.
-            var rows = $grid.pqGrid("getRowsByClass", { cls: 'pq-row-edit' });
-            if (rows.length > 0) {
-                var rowIndx = rows[0].rowIndx;
-                editRow(rowIndx, $grid);
-            }
-        });        
-    });
-
 
  }
 
@@ -735,6 +459,11 @@ var idpais;
    <div id="grid_editing" class='container containerBorder' style="margin: auto;">
 </div>
 
+<script>
+
+
+
+</script>
 
 
 
@@ -742,8 +471,157 @@ var idpais;
 
 
 
+
+
+
+  <div style="margin:20px 0 10px 0;"></div>
+    <div class="easyui-tabs" style="width:700px;height:250px">
+        <div title="About" style="padding:10px">
+           
+
+
+
+
+
+
+
+<table id="dg" title="Pendientes" class="easyui-datagrid" style="width:700px;height:250px"
+      url=""  
+      toolbar="#toolbar" pagination="true"
+      rownumbers="true" fitColumns="true" singleSelect="true">
+    <thead>
+      <tr>
+        <th field="registro" width="50"> Fecha de partido</th>
+        <th field="lastname" width="50">Last Name</th>
+        <th field="phone" width="50">Phone</th>
+        <th field="email" width="50">Email</th>
+      </tr>
+    </thead>
+  </table>
+  <div id="toolbar">
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">New User</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">Edit User</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">Remove User</a>
+  </div>
+  
+  <div id="dlg" class="easyui-dialog" style="width:400px"
+      closed="true" buttons="#dlg-buttons">
+    <form id="fm" method="post" novalidate style="margin:0;padding:20px 50px">
+      <div style="margin-bottom:20px;font-size:14px;border-bottom:1px solid #ccc">User Information</div>
+      <div style="margin-bottom:10px">
+        <input name="firstname" class="easyui-textbox" required="true" label="First Name:" style="width:100%">
+      </div>
+      <div style="margin-bottom:10px">
+        <input name="lastname" class="easyui-textbox" required="true" label="Last Name:" style="width:100%">
+      </div>
+      <div style="margin-bottom:10px">
+        <input name="phone" class="easyui-textbox" required="true" label="Phone:" style="width:100%">
+      </div>
+      <div style="margin-bottom:10px">
+        <input name="email" class="easyui-textbox" required="true" validType="email" label="Email:" style="width:100%">
+      </div>
+    </form>
+  </div>
+  <div id="dlg-buttons">
+    <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">Save</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">Cancel</a>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+           
+        </div>
+        <div title="My Documents" style="padding:10px">
+            <ul class="easyui-tree" data-options="url:'tree_data1.json',method:'get',animate:true"></ul>
+        </div>
+        <div title="Help" data-options="iconCls:'icon-help',closable:true" style="padding:10px">
+            This is the help content.
+        </div>
+    </div>
 
 
   </div>
 </body>
 </html>
+
+
+  <script type="text/javascript">
+    var url;
+
+    $( document ).ready(function() {
+
+
+             $('#dg').datagrid({
+                url: 'http://localhost:8080/api/getpartidos?token='+localStorage.getItem('tk')
+             
+            });
+
+    });
+
+    function newUser(){
+      $('#dlg').dialog('open').dialog('center').dialog('setTitle','New User');
+      $('#fm').form('clear');
+      url = 'save_user.php';
+    }
+    function editUser(){
+      var row = $('#dg').datagrid('getSelected');
+      if (row){
+        $('#dlg').dialog('open').dialog('center').dialog('setTitle','Edit User');
+        $('#fm').form('load',row);
+        url = 'update_user.php?id='+row.id;
+      }
+    }
+    function saveUser(){
+      $('#fm').form('submit',{
+        url: url,
+        onSubmit: function(){
+          return $(this).form('validate');
+        },
+        success: function(result){
+          var result = eval('('+result+')');
+          if (result.errorMsg){
+            $.messager.show({
+              title: 'Error',
+              msg: result.errorMsg
+            });
+          } else {
+            $('#dlg').dialog('close');    // close the dialog
+            $('#dg').datagrid('reload');  // reload the user data
+          }
+        }
+      });
+    }
+    function destroyUser(){
+      var row = $('#dg').datagrid('getSelected');
+      if (row){
+        $.messager.confirm('Confirm','Are you sure you want to destroy this user?',function(r){
+          if (r){
+            $.post('destroy_user.php',{id:row.id},function(result){
+              if (result.success){
+                $('#dg').datagrid('reload');  // reload the user data
+              } else {
+                $.messager.show({ // show error message
+                  title: 'Error',
+                  msg: result.errorMsg
+                });
+              }
+            },'json');
+          }
+        });
+      }
+    }
+  </script>

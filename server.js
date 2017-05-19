@@ -105,6 +105,7 @@ apiRoutes.get('/CancelarReto', MatchCtrl.CancelarReto);
 // Post
 
 apiRoutes.post('/reto', MatchCtrl.AddMatch);
+apiRoutes.post('/getpartidos', MatchCtrl.Partidos);
 
 app.use('/api', apiRoutes);
 

@@ -89,7 +89,7 @@ exports.Partidos = function(req,res){
                  res.setHeader('Content-Type', 'application/json');
                   obj.curPage = 1;
               //   obj.rowCount = 10;
-                 obj.data = rows[0];
+                 obj.rows = rows[0];
                  obj.totalRecords = rows[0].length;
                  res.json(obj);
 
@@ -100,6 +100,10 @@ exports.Partidos = function(req,res){
 
 
 }
+
+
+
+
 
 
 exports.CancelarReto = function(req,res){

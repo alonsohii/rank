@@ -55,7 +55,7 @@ exports.autentificarMysql = function(req,res){
 
  db.query('SELECT idbp_personas as id , correo , pw as paw FROM rank.bp_personas    WHERE correo = "' + req.body.name + '"'  /* + 'AND password =' [hash] */ , function(err, rows, fields) {
 
-if(rows.length>0){
+if(rows.length>0 && rows!=null ) {
 	  
 
 		const secret = 'webos con frijoles@327';

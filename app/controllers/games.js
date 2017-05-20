@@ -103,6 +103,31 @@ exports.Partidos = function(req,res){
 
 
 
+exports.PartidosEnviados = function(req,res){
+
+  var datos = req.query;
+
+
+        db.query('CALL USP_GetMatch(?,?,?)',[req.decoded.id, 5,null],function(err,rows){
+            if(!err){
+                 var obj  = new Object();
+                 res.setHeader('Content-Type', 'application/json');
+                  obj.curPage = 1;
+              //   obj.rowCount = 10;
+                 obj.rows = rows[0];
+                 obj.totalRecords = rows[0].length;
+                 res.json(obj);
+
+            }else {
+             res.status(400);  res.send(err);  throw err;
+            }
+        });
+
+
+}
+
+
+
 
 
 

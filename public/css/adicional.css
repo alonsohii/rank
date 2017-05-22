@@ -7,3 +7,10 @@
   vertical-align: middle;
   
 }
+
+.fondoReta{
+color:fff;
+	background-image: url('../img/street.jpg');
+	background-size: 555px 370px;
+background-position: 0px -130px; 
+}

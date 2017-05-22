@@ -48,13 +48,27 @@ function Reto(arg){
 
        $.get("http://localhost:8080/api/CancelarReto?idreto="+arg+"&token="+localStorage.getItem('tk'), function(data, status){
 
-               //$("#grid_array").pqGrid("refreshDataAndView");
+                  $('#pendientes').datagrid('reload');
 
          }); 
     }
    
 }
 
+function Aceptar(arg){
+
+
+
+    if (confirm("Estas seguro?\nDeseas aceptar este reto")) { 
+         $.get("http://localhost:8080/api/AceptarReto?idreto="+arg+"&token="+localStorage.getItem('tk'), function(data, status){
+
+                  $('#pendientes').datagrid('reload');
+                  $('#aceptar').datagrid('reload');
+
+         }); 
+    }
+
+}
 
   </script>
 
@@ -158,26 +172,76 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
 
 
 
-  <div id="p" class="easyui-panel" title="Realiza una reta" style="width:100%;height:200px;padding:10px;">
        
 
+
+<div class="row">
+  <div class="col-xs-5">
+      
+
+  <div id="p" class="easyui-panel fondoReta" title="Realiza una reta" style="width:100%;height:200px;padding:10px; ">
+
+
  <div class="form-group">
-        <label class="col-xs-3 "></label>
-        <div class="col-xs-4">
- 
-                  <input class="easyui-textbox" name="local" id="local"  value="..." disabled="" style="width:100%" data-options="label:'Partida:',required:true">
+    
+        <div class="col-xs-7">
+                    Reta a un jugador!:
+                  <input class="easyui-textbox" name="local" id="local"  value="..." disabled="" style="width:100%" data-options="label:':',required:true">
             
-            <input id="combobox" style="width:350px"></input>
+            <input id="combobox" style="width:200px"></input>
         </div>
 
     </div>
 
         <div class="form-group">
-        <div class="col-xs-9 col-xs-offset-3">
+        <div class="col-xs-3 col-xs-offset-3">
             <button class="easyui-linkbutton" data-options="iconCls:'icon-add',toggle:true" name="signup" value="Sign up" id='registro' >Retar ahora!</button>
         </div>
     </div>
-    </div>
+
+
+
+
+
+
+  </div>
+      </div>
+
+  <div class="col-xs-7">
+      
+
+  <!--  TABLE -->
+   <table id="aceptar" title="Ultimos retos pendientes aceptar" class="easyui-datagrid" style="width:100%;height:200px"
+      url=""  
+      toolbar="#tool" pagination="true"
+      rownumbers="true" fitColumns="false" singleSelect="true">
+    <thead>
+      <tr>
+      <th field="es" width="120" formatter="formatDetailACC" >Accion</th>
+        <th field="ulocal" width="150">Retador</th>
+        <th field="Torneo" width="110fl" formatter="">Torneo</th>
+        
+        
+      </tr>
+    </thead>
+  </table>
+  <div id="tool">
+
+  </div>
+ 
+
+  <!--  FIN  TABLE -->
+
+
+
+
+
+
+  </div>
+</div>
+
+
+
 
 
 
@@ -193,9 +257,12 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
           
 
         </div>  -->
-        <div data-options="region:'east',split:true" title="East" style="width:20%;">
+        <div data-options="region:'east',split:true" title="Ayuda" style="width:25%;">
           
 
+
+
+<iframe width="320" height="180" src="https://www.youtube.com/embed/F4MBcGrUdOk" frameborder="0" allowfullscreen></iframe>
         </div>
       <!--  <div data-options="region:'west',split:true" title="West" style="width:100px;">
           
@@ -209,7 +276,7 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
 
 
 
-    <div class="easyui-tabs" style="width:80%;height:500px"   data-options="region:'center'">
+    <div class="easyui-tabs" style="width:75%;height:500px"   data-options="region:'center'">
         <div title="Pendientes por registrar" style="padding:0px">
          
 
@@ -221,9 +288,9 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
       rownumbers="true" fitColumns="false" singleSelect="true">
     <thead>
       <tr>
-        <th data-options="field:'registro',width:180"> Fecha de partido</th>
-        <th field="ulocal" width="250">Local</th>
-        <th field="uvisitante" width="250">Visitante</th>
+        <th data-options="field:'registro',width:132"> Fecha de partido</th>
+        <th field="ulocal" width="200">Local</th>
+        <th field="uvisitante" width="200">Visitante</th>
         <th field="golocal" width="80">Gol local</th>
         
         <th field="golvisitane" width="80">Gol Visitante</th>
@@ -232,6 +299,63 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
     </thead>
   </table>
   <div id="toolbar">
+
+    <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-edit" plain="true" onclick="editUser()">Insertar Resultado de reto seleccionado</a>
+
+  </div>
+  
+ 
+  <div id="dlg" class="easyui-dialog" style="width:400px"
+      closed="true" buttons="#dlg-buttons">
+    <form id="fm" method="post" novalidate style="margin:0;padding:20px 50px">
+      <div style="margin-bottom:10px;font-size:12px;border-bottom:1px solid #ccc">Resultado del partido:</div>
+      <div style="margin-bottom:10px">
+        <input name="local" class="easyui-textbox" required="true" label="Goles local:" style="width:100%">
+      </div>
+      <div style="margin-bottom:10px">
+        <input name="visitante" class="easyui-textbox" required="true" label="Gol visitante:" style="width:100%">
+      </div>
+NOTA: recuerda que lo mejor es hacer de estos resultados honestos , todos los resultados estan sujetos a reclamaciones por lo cual se podrian tomar medidas
+respecto a resultados falsos como la expulcion definitiva, quien registra el resultado es el total responsable de este lo puede registrar el local o visitante.
+    </form>
+  </div>
+  <div id="dlg-buttons">
+     <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">Guardar</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">Cancelar</a>
+  </div>
+
+  <!--  FIN  TABLE -->
+
+
+
+
+
+
+        </div>
+        <div title="Retos Enviados" style="padding:0px">
+            <ul class="easyui-tree" data-options="url:'tree_data1.json',method:'get',animate:true"></ul>
+
+
+
+  <!--  TABLE -->
+   <table id="pendientes" title="Retos que has enviado" class="easyui-datagrid" style="width:100%;height:400px"
+      url=""  
+      toolbar="#tool" pagination="true"
+      rownumbers="true" fitColumns="false" singleSelect="true">
+    <thead>
+      <tr>
+      <th field="es" width="120" formatter="formatDetail" >Accion</th>
+        <th data-options="field:'registro',width:150"> Fecha de partido</th>
+        <th field="ulocal" width="200">Local</th>
+        <th field="uvisitante" width="200">Visitante</th>
+       
+        <th field="ess" width="110fl" formatter="estatus">Estatus</th>
+        
+        
+      </tr>
+    </thead>
+  </table>
+  <div id="tool">
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">New User</a>
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">Edit User</a>
     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">Remove User</a>
@@ -256,20 +380,14 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
     </form>
   </div>
   <div id="dlg-buttons">
-    <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">Save</a>
-    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">Cancel</a>
+   <!--   <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">Save</a>
+    <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">Cancel</a>-->
   </div>
 
   <!--  FIN  TABLE -->
 
 
 
-
-
-
-        </div>
-        <div title="Enviados" style="padding:10px">
-            <ul class="easyui-tree" data-options="url:'tree_data1.json',method:'get',animate:true"></ul>
         </div>
         <div title="Ayuda" data-options="iconCls:'icon-help',closable:true" style="padding:10px">
             This is the help content.
@@ -282,10 +400,6 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
 
 
   <!-- FIN  TABS -->
-
-
-
-
 
 
 
@@ -316,27 +430,6 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </body>
 </html>
 
@@ -344,8 +437,119 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
   <script type="text/javascript">
     var url;
 
+    function formatDetail(value,row){
+       //S debugger; 
+
+           var cls;
+           switch (row.estatus) {
+                case 'En espera':
+                    cls = 1;
+                    break;
+                case 'Activo(Aceptado)':
+                    cls = 1;
+                    break;
+                case 'Finalizado':
+                    cls = "alert-info";
+                    break;
+                case 'Rechazado':
+                    cls = "alert-warning";
+                    break;
+                case 'Cancelado':
+                    cls = "alert-danger";
+                    break;
+                default:
+                    cls = "";
+            }
+                    if(cls == 1 ){
+                    var funcion = "Reto("+row.id+")"
+                      return '<button  height ="10" onclick="'+funcion+'" class="easyui-linkbutton c5"  href="#">Cancelar Reto</button>';
+                    }else{
+                      return '';
+                    }
+ 
+    }
+
+
+
+        function formatDetailACC(value,row){
+        debugger; 
+
+           var cls;
+           switch (row.estatus) {
+                case 'En espera':
+                    cls = 1;
+                    break;
+                case 'Activo(Aceptado)':
+                    cls = "";
+                    break;
+                case 'Finalizado':
+                    cls = "alert-info";
+                    break;
+                case 'Rechazado':
+                    cls = "alert-warning";
+                    break;
+                case 'Cancelado':
+                    cls = "alert-danger";
+                    break;
+                default:
+                    cls = "";
+            }
+                    if(cls == 1 ){
+                    var funcion = "Aceptar("+row.id+")"
+                      return '<button  height ="10" onclick="'+funcion+'" class="easyui-linkbutton c4"  href="#">Aceptar Reto</button>';
+                    }else{
+                      return '';
+                    }
+ 
+    }
+
+    function estatus(value,row){
+
+           var cls;
+           switch (row.estatus) {
+                case 'En espera':
+                    cls = "bg-primary";
+                    break;
+                case 'Activo(Aceptado)':
+                    cls = "alert-succes";
+                    break;
+                case 'Finalizado':
+                    cls = "alert-info";
+                    break;
+                case 'Rechazado':
+                    cls = "alert-warning";
+                    break;
+                case 'Cancelado':
+                    cls = "alert-danger";
+                    break;
+                default:
+                    cls = "";
+            }
+                  var  valor = '<div class="'+cls+'">'+row.estatus+'</div>'
+                    //rowData.pq_cellcls[dataIndx] = 'valopink';
+            return valor ;
+
+    }
+
     $( document ).ready(function() {
              $('#dg').datagrid({
+                url: 'http://localhost:8080/api/getpartidos?token='+localStorage.getItem('tk')
+             
+            });
+    });
+
+
+    $( document ).ready(function() {
+             $('#aceptar').datagrid({
+                url: 'http://localhost:8080/api/partidosrecibidos?token='+localStorage.getItem('tk')
+             
+            });
+    });
+
+
+
+    $( document ).ready(function() {
+             $('#pendientes').datagrid({
                 url: 'http://localhost:8080/api/getpartidos?token='+localStorage.getItem('tk')
              
             });
@@ -357,11 +561,14 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
       url = 'save_user.php';
     }
     function editUser(){
+        debugger;
       var row = $('#dg').datagrid('getSelected');
       if (row){
-        $('#dlg').dialog('open').dialog('center').dialog('setTitle','Edit User');
+        $('#dlg').dialog('open').dialog('center').dialog('setTitle','Resultado');
         $('#fm').form('load',row);
-        url = 'update_user.php?id='+row.id;
+        url = 'http://localhost:8080/api/UpdateMatch?id='+row.id+'&token='+localStorage.getItem('tk');
+      }else{
+        alert('Debes selccionar el reto a insertar.');
       }
     }
     function saveUser(){
@@ -438,7 +645,7 @@ camposjson.visitante = $( "#combobox option:selected" ).text();
             jQuery.data( document, "usuario",data );
 
        })).then(function( data, textStatus, jqXHR ) {
-debugger;
+//ebugger;
           // $('#local').val(jQuery.data( document, "usuario")[0].usuario);
 
            $('#local').textbox({

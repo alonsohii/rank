@@ -99,6 +99,7 @@ apiRoutes.get('/check', function(req, res) {
 apiRoutes.get('/getuser', UsuariosCtrl.UserData);
 apiRoutes.get('/partidos', MatchCtrl.Partidos);
 apiRoutes.get('/CancelarReto', MatchCtrl.CancelarReto);
+apiRoutes.get('/AceptarReto', MatchCtrl.AceptarReto);
 
 
 //apiRoutes.use(express.static(__dirname + '/public'));
@@ -106,8 +107,13 @@ apiRoutes.get('/CancelarReto', MatchCtrl.CancelarReto);
 
 apiRoutes.post('/reto', MatchCtrl.AddMatch);
 apiRoutes.post('/getpartidos', MatchCtrl.Partidos);
-apiRoutes.post('/partidosenviados', MatchCtrl.PartidosEnviado);
+apiRoutes.post('/partidosenviados', MatchCtrl.PartidosEnviados);
 apiRoutes.post('/usuarios', UsuariosCtrl.getUsers);
+apiRoutes.post('/partidosrecibidos', MatchCtrl.PartidosRecibidos);
+apiRoutes.post('/UpdateMatch', MatchCtrl.UpdateMatch);
+
+
+
 
 app.use('/api', apiRoutes);
 

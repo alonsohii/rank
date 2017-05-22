@@ -72,7 +72,7 @@ if(rows.length>0 && rows!=null ) {
 				// create a token
 				rows[0].paw = null;
 				var token = jwt.sign(rows[0], app.get('superSecret'), {
-					expiresIn: 5000  // expires in 24 hours
+					expiresIn: 222210000  // expires in 24 hours
 
 				});
 

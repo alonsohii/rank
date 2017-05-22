@@ -103,12 +103,62 @@ exports.Partidos = function(req,res){
 
 
 
+exports.UpdateMatch = function(req,res){
+
+  var datos = req.query;
+
+//console.log(req.body);
+        db.query('CALL USP_UpdateMatch(?,?,?,?,?)',[req.decoded.id, 8,req.query.id,req.body.local,req.body.visitante],function(err,rows){
+            if(!err){
+                 var obj  = new Object();
+                 res.setHeader('Content-Type', 'application/json');
+                  obj.curPage = 1;
+              //   obj.rowCount = 10;
+                // obj.rows = rows[0];
+               //  obj.totalRecords = rows[0].length;
+                 res.json(obj);
+
+            }else {
+             res.status(400);  res.send(err);  throw err;
+            }
+        });
+
+
+}
+
+
+
 exports.PartidosEnviados = function(req,res){
 
   var datos = req.query;
 
 
         db.query('CALL USP_GetMatch(?,?,?)',[req.decoded.id, 5,null],function(err,rows){
+            if(!err){
+                 var obj  = new Object();
+                 res.setHeader('Content-Type', 'application/json');
+                  obj.curPage = 1;
+              //   obj.rowCount = 10;
+                 obj.rows = rows[0];
+                 obj.totalRecords = rows[0].length;
+                 res.json(obj);
+
+            }else {
+             res.status(400);  res.send(err);  throw err;
+            }
+        });
+
+
+}
+
+
+
+exports.PartidosRecibidos = function(req,res){
+
+  var datos = req.query;
+
+
+        db.query('CALL USP_GetMatch(?,?,?)',[req.decoded.id, 7,null],function(err,rows){
             if(!err){
                  var obj  = new Object();
                  res.setHeader('Content-Type', 'application/json');
@@ -154,6 +204,33 @@ exports.CancelarReto = function(req,res){
 
 
 },
+
+
+
+exports.AceptarReto = function(req,res){
+
+  var datos = req.query;
+        
+
+        db.query('CALL USP_GetMatch(?,?,?)',[req.decoded.id, 6,req.query.idreto],function(err,rows){
+            if(!err){
+                 var obj  = new Object();
+                 res.setHeader('Content-Type', 'application/json');
+               //   obj.curPage = 1;
+              //   obj.rowCount = 10;
+                // obj.data = rows[0];
+                console.log(rows);
+                 obj.success = 1;
+                 res.json(obj);
+
+            }else {
+             res.status(400);  res.send(err);  throw err;
+            }
+        });
+
+
+},
+
 
 exports.ModificarReto = function(req,res){
 
